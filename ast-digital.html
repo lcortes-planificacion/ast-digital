@@ -271,6 +271,8 @@ canvas.pad{width:100%;height:158px;border:1.5px dashed #A9B7C4;border-radius:11p
   background:linear-gradient(180deg,#fff,#F7FAFC);box-shadow:inset 0 1px 0 #fff,0 1px 3px rgba(10,37,64,.08);transition:all .13s}
 .item:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(10,37,64,.13)}
 .item b{font:700 14.5px/1.2 var(--f-disp)}
+.acc-item{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.acc-item button{flex:1}
 .traza{padding:10px 0;border-bottom:1px solid var(--line)}
 .traza:last-child{border-bottom:0}
 .traza .t-a{font-size:14.5px;line-height:1.35}
@@ -400,6 +402,18 @@ canvas.pad{width:100%;height:158px;border:1.5px dashed #A9B7C4;border-radius:11p
 .lat-pie{margin-top:auto;padding:14px 16px;font-size:11.5px;color:#7FA4C8;border-top:1px solid rgba(255,255,255,.1)}
 .velo{position:fixed;inset:0;background:rgba(10,37,64,.5);z-index:140;opacity:0;visibility:hidden;transition:.24s}
 .velo.on{opacity:1;visibility:visible}
+.salir.on{background:linear-gradient(180deg,#2AA353,#1B7F3B);border-color:rgba(255,255,255,.45);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 3px rgba(42,163,83,.28)}
+.salir.off{background:linear-gradient(180deg,#DB3A3A,#C62828);border-color:rgba(255,255,255,.45);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 0 3px rgba(198,40,40,.3)}
+.alerta{position:fixed;left:12px;right:12px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:110;
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+  background:linear-gradient(180deg,#FEF2F2,#FBDFDF);border:1px solid #E4A7A7;border-radius:14px;
+  padding:13px 14px;color:#9E1F1F;font-size:13.5px;box-shadow:0 10px 30px rgba(10,37,64,.28)}
+.alerta .mini{color:#A34545}
+.alerta button{margin:0;flex:0 0 auto;padding:12px 18px;font-size:13.5px;letter-spacing:.06em;
+  background:linear-gradient(180deg,#DB3A3A,#C62828)}
+@media (min-width:920px){ .alerta{left:calc(250px + 16px);right:16px;bottom:16px} }
 .salir{position:absolute;right:66px;top:12px;width:44px;height:40px;border-radius:11px;cursor:pointer;z-index:3;
   border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:#fff;
   display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
@@ -478,6 +492,7 @@ header.compact .salir{top:7px;height:34px}
   <div class="quien" id="quien"></div>
 </header>
 </div>
+<div class="alerta" id="alerta" style="display:none"></div>
 <div class="cola" id="cola" style="display:none"></div>
 <div class="modo" id="modo" style="display:none"></div>
 <div class="wrap" id="app"></div>
@@ -497,9 +512,9 @@ const CONFIG = {
   CLAVE_ADMIN : 'Nsgb1290',            // clave de respaldo opcional; la clave normal es la fecha DDMMAAAA
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '6.4',
+  VERSION : '1.0',
   DIAS_RETENCION : 90,
-  REFRESCO_SEG : 25,
+  REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
 };
 
@@ -559,6 +574,26 @@ const ACOLOR={miscelaneos:'#4A5B6B',granallado:'#7A6A2B',desarme:'#8A5A2B',ensam
 function icono(k){return '<div class="ico"><svg viewBox="0 0 24 24">'+(ICONOS[k]||ICONOS.ensamble)+'</svg></div>';}
 function tinte(k){const c=ACOLOR[k]||'#0B4EA2';return 'style="--ac:'+c+';--acbg:'+c+'14;--acbd:'+c+'33"';}
 
+const MOTIVOS_DEV=[
+  'Faltan riesgos de la tarea',
+  'Riesgos marcados no corresponden',
+  'Riesgo crítico sin medida de control',
+  'Etapas no corresponden al trabajo',
+  'EPP incompleto para la tarea',
+  'Izaje sin certificación vigente',
+  'Herramientas sin inspección vigente',
+  'Área sin condiciones (orden y aseo)',
+  'Falta coordinación con áreas colindantes',
+  'Antecedentes incompletos',
+  'Descripción del trabajo poco clara',
+  'Horario mal declarado',
+  'Personal sin registrar',
+  'Falta firma del colaborador',
+  'Estado emocional requiere evaluación',
+  'AST no corresponde al área o línea',
+  'Se requiere más personal para la tarea'];
+const SECCIONES_DEV=['Antecedentes generales','Paso 1 · Pensar','Paso 2 · Observar','Paso 3 · Chequear',
+  'Paso 4 · Planificación','Paso 5 · Riesgos','Participantes'];
 let ANIMOS=[['Muy bien','😊'],['Bien','🙂'],['Normal','😐'],['Preocupado','😟'],['Estresado','😣'],['Enojado','😡'],['Triste','😔'],['Otro','✳️']];
 let AFECTA=['No','Sí','No estoy seguro'];
 let DECLARACION='Declaro haber participado en la charla previa, haber tomado conocimiento de los riesgos y las medidas de control definidas en este AST, y conocer mi derecho y mi obligación de detener el trabajo ante cualquier condición insegura.';
@@ -596,6 +631,7 @@ function fmtRut(v){
 function rutInput(el){ if(!el) return; const p=el.value; const f=fmtRut(p); if(f!==p) el.value=f; }
 function fmtFecha(f){if(!f)return'';const p=f.split('-');return p[2]+'-'+p[1]+'-'+p[0];}
 function lineasDe(a){return (AREAS[a]&&AREAS[a].lineas)||null;}
+function esOtros(id){ return String(id||'').toUpperCase()==='OT'; }
 function esDiaria(a,id){
   const o=objLinea(a,id); if(!o) return false;
   if(typeof o.diaria==='boolean') return o.diaria;
@@ -656,8 +692,11 @@ function toast(t){const e=document.createElement('div');e.className='toast';e.te
 
 /* ===================== BASE DE DATOS ===================== */
 const EN_SERVIDOR = /^https?:$/.test(location.protocol) && !!location.hostname;
+// Publicada, la aplicación trabaja siempre contra la nube. El almacén local
+// solo existe para abrir el archivo sin servidor (vista previa) y para pruebas.
 let MODO_LOCAL = !EN_SERVIDOR;
-try{ if(localStorage.getItem('ast_modo')==='local') MODO_LOCAL=true; }catch(e){ MODO_LOCAL=true; }
+try{ localStorage.removeItem('ast_modo'); localStorage.removeItem('ast_modo_v'); }catch(e){}
+if(typeof window!=='undefined' && window.__AST_LOCAL===true) MODO_LOCAL=true;
 
 const LOCAL={
   get(t){ try{ return JSON.parse(localStorage.getItem('ast_db_'+t)||'[]'); }catch(e){ return []; } },
@@ -697,11 +736,54 @@ const LOCAL={
   borrar(){ ['ast_db_ast_registros','ast_db_ast_participantes','ast_db_ast_config'].forEach(k=>localStorage.removeItem(k)); }
 };
 function pintaModo(){
-  const m=$('#modo');
-  if(!MODO_LOCAL){ m.style.display='none'; return; }
-  m.style.display='block';
-  m.innerHTML='<b>MODO PRUEBA</b> — los datos se guardan solo en este dispositivo, no en la nube.';
+  const m=$('#modo'); if(!m) return;
+  m.style.display='none';   // la aplicación publicada trabaja siempre contra la nube
 }
+/* ===================== ESTADO DE LA CONEXIÓN ===================== */
+let NUBE = !EN_SERVIDOR ? true : false;   // fuera de un servidor no aplica
+let probando=false;
+async function probarNube(silencio){
+  if(!EN_SERVIDOR){ NUBE=true; pintaNube(); return true; }
+  if(probando) return NUBE;
+  probando=true;
+  let ok=false;
+  try{
+    const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),CONFIG.ESPERA_MAX_MS);
+    const r=await fetch(CONFIG.SB_URL+'/rest/v1/ast_config?select=id&limit=1',{signal:ctl.signal,headers:{
+      apikey:CONFIG.SB_KEY, Authorization:'Bearer '+CONFIG.SB_KEY}});
+    clearTimeout(to); ok=r.ok;
+  }catch(e){ ok=false; }
+  probando=false;
+  const antes=NUBE; NUBE=ok; pintaNube();
+  if(ok && !antes && !silencio) toast('Conectado a la nube');
+  if(ok) enviarCola(false);
+  return ok;
+}
+function pintaNube(){
+  const b=$('#salir');
+  if(b){
+    if(!EN_SERVIDOR){ b.classList.remove('on'); b.classList.remove('off'); b.title='Cerrar sesión'; }
+    else { b.classList.toggle('on', !!NUBE); b.classList.toggle('off', !NUBE);
+           b.title=(NUBE?'Conectado a la nube':'Sin conexión')+' · Cerrar sesión'; }
+  }
+  const al=$('#alerta');
+  if(al){
+    if(NUBE || !EN_SERVIDOR){ al.style.display='none'; }
+    else{
+      al.style.display='flex';
+      al.innerHTML='<div><b>Sin conexión con la nube.</b><br><span class="mini">'+
+        'No entres a las áreas hasta conectar: lo que registres podría no llegar al resto del taller.</span></div>'+
+        '<button onclick="reconectar()">CONECTAR</button>';
+    }
+  }
+}
+async function reconectar(){
+  toast('Conectando…');
+  const ok=await probarNube(true);
+  if(ok){ toast('Conectado a la nube'); if(AREA&&LIN){ try{ await cargar(); }catch(e){} } render(); }
+  else toast('Sigue sin conexión. Revisa la señal e inténtalo otra vez.');
+}
+
 /* ===================== COLA DE ENVÍO SIN CONEXIÓN ===================== */
 let COLA=[];
 function cargarCola(){ try{ COLA=JSON.parse(localStorage.getItem('ast_cola')||'[]'); }catch(e){ COLA=[]; } }
@@ -754,10 +836,11 @@ async function api(path,opt){
     if(EN_SERVIDOR){
       const m=(opt&&opt.method)||'GET';
       if(m==='POST'||m==='PATCH'||m==='DELETE'){
-        encolar(path,opt,path.split('?')[0]);
+        encolar(path,opt,path.split('?')[0]); NUBE=false; pintaNube();
         const err=new Error('Sin conexión: la acción quedó en cola y se enviará al recuperar la señal.');
         err.cola=true; throw err;
       }
+      NUBE=false; pintaNube();
       throw new Error('Sin conexión con la nube. Revisa la señal e inténtalo otra vez.');
     }
     MODO_LOCAL=true; try{ localStorage.setItem('ast_modo','local'); }catch(e2){}
@@ -801,16 +884,8 @@ async function cargarCFG(){
     const r=await api('ast_config?id=eq.main&limit=1');
     if(r && r[0] && r[0].datos) CFG=Object.assign({areas:{},docs:{},cat:{}}, r[0].datos);
   }catch(e){}
-  // Una sola vez por versión: descartar lo guardado que duplica lo que ya trae el archivo.
-  if(CFG.base!==CONFIG.VERSION){
-    let cambio=false;
-    Object.keys(CFG.areas||{}).forEach(k=>{ if(AREAS_BASE.indexOf(k)>=0){ delete CFG.areas[k]; cambio=true; } });
-    Object.keys(CFG.docs||{}).forEach(k=>{ if(DOCS_BASE.indexOf(k)>=0){ delete CFG.docs[k]; cambio=true; } });
-    CFG.base=CONFIG.VERSION;
-    if(cambio) toast('Configuración actualizada a la versión '+CONFIG.VERSION);
-    await guardarCFG();
-    return;
-  }
+  // La configuración guardada por el administrador manda siempre.
+  // Cambiar el número de versión ya no descarta nada.
   aplicarCFG();
 }
 function logCFG(accion,detalle){
@@ -929,7 +1004,8 @@ async function cargar(){
   } else avisoArchivo=null;
   parts = ast ? await api('ast_participantes?ast_id=eq.'+ast.id+'&order=creado.asc') : [];
 }
-const VISTAS_FORM=['ident','crear','registro','firma','acceso'];
+const VISTAS_FORM=['ident','crear','registro','firma','acceso',
+  'adm-areas','adm-area','adm-doc','adm-bloques','adm-cat','adm-preg','adm-sup','adm-gen','adm-log'];
 function puedeRefrescar(){
   if(!IDENT) return false;                       // pantalla de identificación
   if(VISTAS_FORM.indexOf(vista)>=0) return false; // formularios abiertos
@@ -937,6 +1013,27 @@ function puedeRefrescar(){
   const ae=document.activeElement;
   if(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return false; // está escribiendo
   return true;
+}
+async function refrescoAuto(){
+  if(!IDENT) return;
+  if(VISTAS_FORM.indexOf(vista)>=0) return;          // formularios abiertos
+  if(archivoAbierto) return;                          // AST del historial en pantalla
+  const ae=document.activeElement;
+  if(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return;   // está escribiendo
+  if(document.querySelector('.ovl')) return;          // hay un cuadro de confirmación
+  const lat=$('#lateral');
+  if(lat && lat.classList.contains('open')) return;   // menú abierto
+  const y=window.scrollY||document.documentElement.scrollTop||0;
+  try{
+    if(AREA && LIN) await refrescar();
+    else if(AREA)   await renderLineas();
+    else if(vista==='stats')    await renderStats();
+    else if(vista==='archivo')  await renderArchivo();
+    else if(vista==='firmas')   await renderFirmas();
+    else if(vista==='revision') await renderRevision();
+    else if(!vista)             await renderPanel();
+  }catch(e){}
+  window.scrollTo(0,y);
 }
 async function refrescar(){
   const antes = ast? ast.estado : null;
@@ -962,7 +1059,7 @@ function render(){
   const est=estadoReal(ast);
   $('#hz').className='hazard st-'+est;
   tema();
-  pintaQuien(); pintaModo(); pintaCola(); pintaNav(); pintaSalir(); setTimeout(ajustaTope,0);
+  pintaQuien(); pintaModo(); pintaCola(); pintaNav(); pintaSalir(); pintaNube(); setTimeout(ajustaTope,0);
   if(vista==='acceso'){ renderAcceso(); return; }
   if(!IDENT || vista==='ident'){ renderIdent(); return; }
   if(!AREA){
@@ -1000,7 +1097,7 @@ function pintaNav(){
   if(VISTAS_FORM.indexOf(vista)>=0 && vista!=='ident'){
     n.innerHTML='<span onclick="salirForm()">‹ Volver</span>'; return;
   }
-  if(archivoAbierto) h='<span onclick="volverArchivo()">‹ Guardados</span>';
+  if(archivoAbierto) h='<span onclick="volverArchivo()">‹ AST guardadas</span>';
   else if(AREA){
     h='<span onclick="ir(null)">‹ Inicio</span>';
     if(LIN&&LIN!=='UNICA'&&lineasDe(AREA)) h+=' · <span onclick="ir(\''+AREA+'\')">'+esc(AREAS[AREA].n)+'</span>';
@@ -1108,8 +1205,8 @@ async function renderLineas(){
     barra([['Reintentar','sec',()=>renderLineas()],['Inicio','sec',()=>ir(null)]]); return;
   }
   const res={firmada:0,pendiente:0,borrador:0,ninguna:0,vencida:0,archivada:0,anulada:0};
-  A.lineas.forEach(L=>{ res[estadoReal(data.find(x=>x.linea===L.id))]++; });
-  let h='<div class="card"><h2>Resumen del área</h2><table>'+
+  A.lineas.filter(L=>!esOtros(L.id)).forEach(L=>{ res[estadoReal(data.find(x=>x.linea===L.id))]++; });
+  let h='<div class="card"><h2>Resumen del área <span class="cnt">sin contar «Otros»</span></h2><table>'+
     fila('Autorizadas (verde)',res.firmada)+fila('Pendientes de firma (rojo)',res.pendiente)+
     fila('En llenado',res.borrador)+fila('Sin AST hoy',res.ninguna)+'</table></div>';
   h+='<div class="grid">';
@@ -1142,6 +1239,15 @@ function renderAST(){
     return;
   }
   const c=ast.contenido||{};
+  if(c.devolucion && est==='borrador'){
+    const dv=c.devolucion;
+    h+='<div class="msg e"><b>El supervisor devolvió esta AST.</b>'+
+       (dv.seccion?'<br>Sección a corregir: <b>'+esc(dv.seccion)+'</b>':'')+
+       ((dv.motivos&&dv.motivos.length)?'<br>Motivo: '+esc(dv.motivos.join(' · ')):'')+
+       (dv.detalle?'<br>Detalle: '+esc(dv.detalle):'')+
+       '<br><span class="mini">'+esc(dv.quien||'')+' · '+esc(fmtFecha(dv.fecha||''))+' '+esc(dv.hora||'')+
+       ' — corrige y vuelve a enviarla a firma.</span></div>';
+  }
   if(fueraDeHorario(ast) && (est==='pendiente'||est==='borrador')){
     h+='<div class="msg e"><b>El horario de vigencia ya terminó</b> ('+esc(ast.hora_inicio||'')+' a '+esc(ast.hora_fin||'')+
        ' hrs). La AST sigue activa, pero corrige el horario antes de iniciar el trabajo.</div>';
@@ -1219,9 +1325,10 @@ function renderAST(){
   $('#app').innerHTML=h;
 
   const b=[];
-  if(archivoAbierto){ barra([['Guardar PDF','',imprimir],['Descargar copia','sec',descargar],['Volver a Guardados','sec',volverArchivo]]); return; }
+  if(archivoAbierto){ barra([['Guardar PDF','',imprimir],['Descargar copia','sec',descargar],['Volver a AST guardadas','sec',volverArchivo]]); return; }
   if(est!=='vencida'&&est!=='anulada'&&est!=='archivada') b.push(['Registrarme','',()=>{vista='registro';render();}]);
   if(est==='borrador') b.push(['Completar AST','sec',()=>{vista='crear';render();}]);
+  if(est==='firmada') b.push(['Modificar AST','sec',modificarFirmada]);
   if(est==='pendiente') b.push(['Firmar como supervisor','ok',()=>{esSup=false;vista='firma';render();}]);
   b.push(['Guardar PDF','sec',imprimir]);
   b.push(['Descargar copia','sec',descargar]);
@@ -1478,17 +1585,30 @@ async function guardar(estado){
     turno:$('#f_turno').value, hora_inicio:$('#f_ini').value, hora_fin:$('#f_fin').value,
     actualizado:new Date().toISOString() };
   if(estado==='pendiente'){
-    if(!body.responsable) return toast('Falta el responsable de la tarea');
-    if(!cont.descripcion) return toast('Falta el trabajo a realizar');
-    if(W.p1.concat(W.p2,W.p3).some(v=>v===null||v===undefined)) return toast('Faltan preguntas de los pasos 1, 2 y 3');
-    if(!cont.epp.length) return toast('Debe marcar el EPP requerido');
-    if(cont.eppOk!==true) return toast('Debe verificar que el EPP esté en buenas condiciones');
-    if(cont.herrOk!==true) return toast('Debe verificar el check list de herramientas');
-    if(!etapas.length) return toast('Debe marcar al menos un riesgo del trabajo');
-    if(!cont.firmaColab) return toast('Falta la firma del colaborador');
-    if(!cont.supTaller) return toast('Indica a qué supervisor se envía a firma');
-    if(cont.animo==='Otro' && !cont.animoOtro) return toast('Indica cómo te sientes en el campo de estado emocional');
+    // Un solo aviso con todo lo que falta, en vez de uno a uno
+    const falta=[];
+    if(!body.responsable) falta.push('Nombre del colaborador');
+    if(!cont.descripcion) falta.push('Trabajo a realizar');
+    if(!cont.lugar) falta.push('Lugar específico');
+    if(cont.animo==='Otro' && !cont.animoOtro) falta.push('Detalle del estado emocional');
+    if(!cont.firmaColab) falta.push('Firma del colaborador');
+    if(!cont.supTaller) falta.push('Supervisor a quien se envía a firma');
+    const sinResp=[];
+    if(W.p1.some(v=>v===null||v===undefined)) sinResp.push('Paso 1');
+    if(W.p2.some(v=>v===null||v===undefined)) sinResp.push('Paso 2');
+    if(W.p3.some(v=>v===null||v===undefined)) sinResp.push('Paso 3');
+    if(sinResp.length) falta.push('Preguntas sin responder en '+sinResp.join(', '));
+    if(!cont.epp.length) falta.push('Paso 4: EPP requerido');
+    if(cont.eppOk===null) falta.push('Paso 4: estado del EPP (SÍ o NO)');
+    if(cont.herrOk===null) falta.push('Paso 4: check list de herramientas (SÍ o NO)');
+    if(!etapas.length) falta.push('Paso 5: al menos un riesgo marcado');
+    if(falta.length){
+      await pregunta('Falta completar:\n\n· '+falta.join('\n· ')+
+        '\n\nCompleta esos campos y vuelve a enviar la AST a firma.','Entendido', false);
+      return;
+    }
   }
+  if(estado==='pendiente') delete cont.devolucion;
   body.contenido=conTraza(
     !ast ? (estado==='pendiente'?'Creó y envió a firma':'Creó la AST')
          : (estado==='pendiente'?'Envió a firma':'Guardó cambios'), cont);
@@ -1587,13 +1707,30 @@ function renderFirma(){
      fila('Vigencia',(ast.hora_inicio||'')+' a '+(ast.hora_fin||''))+
      fila('Etapas',(c.etapas||[]).length)+fila('Participantes',parts.length)+'</table></div>';
 
-  h+='<div class="card"><h2>Autorización</h2><label>Nombre del supervisor</label><input id="s_nom" value="'+esc(ast.sup_nombre||IDENT.nombre)+'">'+
-     '<label>Observaciones</label><textarea id="s_obs"></textarea>'+
+  h+='<div class="card sec5"><h2>Si vas a devolverla</h2>'+
+     '<p class="mini" style="margin:-4px 0 11px">Marca el motivo y explica qué corregir. El responsable lo verá al abrir la AST.</p>'+
+     '<div id="d_mot"></div>'+
+     '<label>Sección a corregir</label><select id="s_sec"><option value="">— Toda la AST —</option>'+
+       SECCIONES_DEV.map(s=>'<option>'+esc(s)+'</option>').join('')+'</select>'+
+     '<label>Qué debe corregir</label><textarea id="s_det" placeholder="Ej: falta el riesgo de atrapamiento en el montaje del eje"></textarea></div>';
+  h+='<div class="card sec7"><h2>Autorización</h2><label>Nombre del supervisor</label><input id="s_nom" value="'+esc(ast.sup_nombre||IDENT.nombre)+'">'+
+     '<label>Observaciones de la firma (opcional)</label><textarea id="s_obs"></textarea>'+
      '<label>Firma</label><canvas class="pad" id="pad"></canvas>'+
      '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button></div>';
   $('#app').innerHTML=h;
+  W.mot=[]; pintaMotivos();
   iniciarPad($('#pad'));
   barra([['Firmar y autorizar','ok',firmar],['Devolver a corrección','dan',devolver],['Volver','sec',()=>{vista='';render();}]]);
+}
+function pintaMotivos(){
+  const el=$('#d_mot'); if(!el) return;
+  el.innerHTML='<div class="pills">'+MOTIVOS_DEV.map((m,i)=>
+    '<span class="pill '+((W.mot||[]).indexOf(m)>=0?'on':'')+'" onclick="togMotivo('+i+')"><span class="bx"></span>'+esc(m)+'</span>').join('')+'</div>';
+}
+function togMotivo(i){
+  const m=MOTIVOS_DEV[i]; W.mot=W.mot||[];
+  const p=W.mot.indexOf(m); p>=0?W.mot.splice(p,1):W.mot.push(m);
+  pintaMotivos();
 }
 async function firmar(){
   if(!document.querySelector('#s_nom')) return;
@@ -1615,16 +1752,48 @@ async function firmar(){
     } else toast('Error: '+e.message);
   }
 }
-async function devolver(){
-  const obs=$('#s_obs')?$('#s_obs').value.trim():'';
-  const ok=await pregunta('¿Devolver la AST a corrección? Volverá a estado de llenado y no podrá iniciarse el trabajo.','Devolver');
+async function modificarFirmada(){
+  const ok=await pregunta('Esta AST ya está autorizada. Si la modificas, la firma del supervisor se anula '+
+    'y la AST vuelve a ROJO hasta que sea firmada de nuevo. El trabajo debe detenerse mientras tanto. ¿Continuar?','Modificar');
   if(!ok) return;
   try{
     await api('ast_registros?id=eq.'+ast.id,{method:'PATCH',body:JSON.stringify({
-      estado:'borrador', sup_obs:obs, actualizado:new Date().toISOString(),
-      contenido:conTraza(obs?'Devuelta a corrección: '+obs:'Devuelta a corrección') })});
-    esSup=false; vista=''; await cargar(); render(); toast('Devuelta a corrección');
-  }catch(e){ toast('Error: '+e.message); }
+      estado:'borrador', sup_firma:null, sup_nombre:null, sup_hora:null,
+      sup_obs:'Modificada después de firmada: requiere nueva autorización',
+      actualizado:new Date().toISOString(),
+      contenido:conTraza('Modificó una AST ya firmada — se anuló la autorización') })});
+    await cargar(); vista='crear'; render(); arriba();
+    toast('Autorización anulada. Corrige y vuelve a enviar a firma.');
+  }catch(e){
+    if(e.cola){ toast('Sin conexión: el cambio quedó en cola.'); }
+    else toast('Error: '+e.message);
+  }
+}
+async function devolver(){
+  const motivos=(W.mot||[]).slice();
+  const detalle=V('#s_det').trim();
+  const seccion=V('#s_sec');
+  if(!motivos.length && !detalle){
+    await pregunta('Para devolver una AST hay que indicar el motivo.\n\nMarca al menos un motivo o escribe qué debe corregirse. '+
+      'Sin eso, quien la llenó no sabe qué arreglar.','Entendido', false);
+    return;
+  }
+  const resumen=[motivos.join(' · '), detalle].filter(Boolean).join(' — ');
+  const ok=await pregunta('¿Devolver la AST a corrección?\n\n'+resumen+
+    '\n\nVolverá a estado de llenado y el trabajo no puede iniciarse.','Devolver');
+  if(!ok) return;
+  const cont=conTraza('Devuelta a corrección: '+resumen);
+  cont.devolucion={ motivos:motivos, detalle:detalle, seccion:seccion,
+    quien:(IDENT&&IDENT.nombre)||'', hora:ahoraHM(), fecha:hoy() };
+  try{
+    await api('ast_registros?id=eq.'+ast.id,{method:'PATCH',body:JSON.stringify({
+      estado:'borrador', sup_obs:resumen, actualizado:new Date().toISOString(), contenido:cont })});
+    esSup=false; vista=''; await cargar(); render();
+    avisar('AST devuelta a corrección', resumen.slice(0,90));
+  }catch(e){
+    if(e.cola){ esSup=false; vista=''; render(); toast('Sin conexión: la devolución quedó en cola.'); }
+    else toast('Error: '+e.message);
+  }
 }
 
 /* ---------- Bandeja de firmas del supervisor ---------- */
@@ -1690,6 +1859,7 @@ async function renderRevision(){
   try{ data=await api('ast_registros?fecha=gte.'+fechaMenos(revDias)+'&order=fecha.desc&limit=800'); }
   catch(e){ $('#app').innerHTML='<div class="msg e">No se pudo leer.<br><span class="mini">'+esc(e.message)+'</span></div>';
     barra([['Reintentar','sec',renderRevision],['Inicio','sec',()=>{vista='';render();}]]); return; }
+  data=data.filter(x=>!esOtros(x.linea));   // «Otros» no se contabiliza
   const firmadas=data.filter(x=>!!x.sup_firma);
   const sin=data.filter(x=>!x.sup_firma);
   const lista = revFiltro==='sin' ? sin : firmadas;
@@ -1725,8 +1895,8 @@ async function renderRevision(){
 /* ---------- Guardados ---------- */
 let filtroDias=30, filtroArea='', filtroEst='';
 async function renderArchivo(){
-  $('#titulo').textContent='Guardados';
-  $('#meta').textContent='Historial de AST';
+  $('#titulo').textContent='AST guardadas';
+  $('#meta').textContent='Historial y descargas';
   $('#app').innerHTML='<p class="mini">Buscando…</p>';
   let data=[];
   try{ data=await api('ast_registros?fecha=gte.'+fechaMenos(filtroDias)+'&order=fecha.desc&limit=500'); }
@@ -1755,10 +1925,14 @@ async function renderArchivo(){
   if(!data.length) h+='<p class="mini">No hay AST guardadas en este período.</p>';
   data.forEach(x=>{
     const e=estadoReal(x);
-    h+='<div class="item" style="border-left-color:'+COLOR[e]+'" onclick="abrirArchivo(\''+x.id+'\')">'+
+    h+='<div class="item" style="border-left-color:'+COLOR[e]+'">'+
+       '<div onclick="abrirArchivo(\''+x.id+'\')">'+
        '<b>'+esc(tituloGuardado(x))+'</b>'+
        '<div class="mini num">'+fmtFecha(x.fecha)+' · '+esc(x.hora_inicio||'')+'–'+esc(x.hora_fin||'')+' · '+ETIQ[e][0]+'</div>'+
-       '<div class="mini">'+esc(x.responsable||'sin responsable')+(x.ran?' · '+esc(x.ran):'')+'</div></div>';
+       '<div class="mini">'+esc(x.responsable||'sin responsable')+(x.ran?' · '+esc(x.ran):'')+
+       (x.sup_nombre?' · firmó '+esc(x.sup_nombre):'')+'</div></div>'+
+       '<div class="acc-item"><button class="sec sm" onclick="event.stopPropagation();pdfUna(\''+x.id+'\')">Descargar PDF</button>'+
+       '<button class="sec sm" onclick="abrirArchivo(\''+x.id+'\')">Ver</button></div></div>';
   });
   h+='</div>';
   $('#app').innerHTML=h;
@@ -1803,6 +1977,18 @@ function astImpresa(x,ps){
   }
   if(x.sup_firma) s+='<p class="mini" style="margin-top:8px">Autorizada por '+esc(x.sup_nombre||'')+' a las '+esc(x.sup_hora||'')+'</p><img src="'+x.sup_firma+'" style="height:52px">';
   return s+'</div>';
+}
+async function pdfUna(id){
+  try{
+    const r=await api('ast_registros?id=eq.'+id+'&limit=1');
+    if(!r||!r[0]) return toast('No se encontró la AST');
+    const x=r[0];
+    const ps=await api('ast_participantes?ast_id=eq.'+x.id+'&order=creado.asc');
+    const css=document.querySelector('style').outerHTML;
+    const html='<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>'+esc(tituloGuardado(x))+'</title>'+css+
+      '</head><body><div class="wrap">'+astImpresa(x,ps)+'</div></body></html>';
+    imprimirDoc(html,'AST_'+x.fecha);
+  }catch(e){ toast('Error: '+e.message); }
 }
 async function abrirArchivo(id){
   try{
@@ -1872,6 +2058,11 @@ async function renderStats(){
   }catch(e){ $('#app').innerHTML='<div class="msg e">No se pudieron calcular las estadísticas.<br><span class="mini">'+esc(e.message)+'</span></div>';
     barra([['Reintentar','sec',renderStats],['Inicio','sec',()=>{vista='';render();}]]); return; }
 
+  const otros=data.filter(x=>esOtros(x.linea));          // se miden aparte
+  const idsOtros=otros.map(x=>x.id);
+  const ppOtros=pp.filter(z=>idsOtros.indexOf(z.ast_id)>=0);
+  pp=pp.filter(z=>idsOtros.indexOf(z.ast_id)<0);
+  data=data.filter(x=>!esOtros(x.linea));
   const total=data.length;
   const firmadas=data.filter(x=>x.sup_firma).length;
   const sinFirma=total-firmadas;
@@ -1977,41 +2168,80 @@ async function renderStats(){
   }
 
   if(esSupervision()){
-    const habiles=[];
-    for(let i=0;i<statsDias;i++){
-      const dd=new Date(); dd.setDate(dd.getDate()-i);
-      if(dd.getDay()!==0) habiles.push(dd.getFullYear()+'-'+String(dd.getMonth()+1).padStart(2,'0')+'-'+String(dd.getDate()).padStart(2,'0'));
-    }
-    const hechas={};
-    data.forEach(x=>{ hechas[x.area+'|'+x.linea+'|'+x.fecha]=1; });
-    let espTot=0, realTot=0; const filasCob=[];
-    Object.keys(AREAS).forEach(k=>{
-      const L=(lineasDe(k)||[]).filter(x=>esDiaria(k,x.id));
-      if(!L.length) return;
-      const esp=L.length*habiles.length;
-      let real=0;
-      L.forEach(l=>habiles.forEach(f=>{ if(hechas[k+'|'+l.id+'|'+f]) real++; }));
-      espTot+=esp; realTot+=real;
-      filasCob.push([AREAS[k].n, real, esp]);
+    /* ---- 1. Líneas sin actividad reciente ---- */
+    const ultima={};
+    data.forEach(x=>{
+      const k=x.area+'|'+x.linea;
+      if(!ultima[k] || x.fecha>ultima[k]) ultima[k]=x.fecha;
     });
-    if(espTot){
-      const pct=Math.round(realTot*100/espTot);
-      h+='<div class="card sec3"><h2>Cobertura de AST <span class="cnt">'+pct+'%</span></h2>'+
-         '<p class="mini" style="margin:-4px 0 12px">Días hábiles con AST creada, sobre los días que cada línea debería haber trabajado. '+
-         'Se cuentan '+habiles.length+' días hábiles y '+ (espTot/habiles.length) +' líneas de operación diaria. Los domingos no se consideran.</p>'+
-         '<div class="vels">'+velocimetro(pct,'Cobertura del período',pct+'%','#0E8A6E')+'</div>'+
-         '<table style="margin-top:12px"><tr><th>Área</th><th>Días con AST</th><th>%</th></tr>';
-      filasCob.sort((x,y)=> (x[1]/x[2])-(y[1]/y[2])).forEach(f=>{
-        const p=Math.round(f[1]*100/f[2]);
-        h+='<tr><td>'+esc(f[0])+'</td><td class="num">'+f[1]+' de '+f[2]+'</td>'+
-           '<td class="num" style="color:'+(p>=80?'var(--verde)':p>=50?'var(--ambar)':'var(--rojo)')+'"><b>'+p+'%</b></td></tr>';
+    const hoyMs=Date.parse(hoy()+'T00:00:00');
+    const filas=[];
+    Object.keys(AREAS).forEach(k=>{
+      (lineasDe(k)||[]).forEach(l=>{
+        if(esOtros(l.id) || !esDiaria(k,l.id)) return;
+        const f=ultima[k+'|'+l.id];
+        const dias = f ? Math.round((hoyMs-Date.parse(f+'T00:00:00'))/86400000) : null;
+        filas.push({area:AREAS[k].n, linea:l.n, fecha:f, dias:dias});
       });
-      h+='</table><p class="mini" style="margin-top:10px">Una cobertura baja no siempre es incumplimiento: puede ser que el área no tuvo trabajo. '+
-         'Sirve para preguntar, no para concluir.</p></div>';
-    } else {
-      h+='<div class="card sec3"><h2>Cobertura de AST</h2><p class="mini">Ninguna línea está marcada como de operación diaria. '+
-         'Márcalas en <b>Áreas y líneas</b> para medir la cobertura.</p></div>';
-    }
+    });
+    filas.sort((x,y)=>{
+      if(x.dias===null && y.dias===null) return 0;
+      if(x.dias===null) return -1;
+      if(y.dias===null) return 1;
+      return y.dias-x.dias;
+    });
+    const nunca=filas.filter(f=>f.dias===null).length;
+    const viejas=filas.filter(f=>f.dias!==null && f.dias>=7).length;
+    h+='<div class="card sec3"><h2>Líneas sin actividad reciente <span class="cnt">'+filas.length+' líneas</span></h2>'+
+       '<p class="mini" style="margin:-4px 0 12px">Cuándo fue la última AST de cada línea de operación diaria. '+
+       'No es un porcentaje ni supone cuánto debió trabajarse: solo muestra dónde no está pasando nada, para preguntar.</p>'+
+       '<div class="kpi"><div><b>'+nunca+'</b><small>Sin AST en el período</small></div>'+
+       '<div><b>'+viejas+'</b><small>Con más de 7 días</small></div></div>'+
+       '<table style="margin-top:12px"><tr><th>Línea</th><th>Última AST</th></tr>';
+    filas.slice(0,18).forEach(f=>{
+      const col = f.dias===null?'var(--rojo)' : f.dias>=7?'var(--rojo)' : f.dias>=3?'var(--ambar)':'var(--verde)';
+      const txt = f.dias===null ? 'sin registro en el período'
+                : f.dias===0 ? 'hoy'
+                : f.dias===1 ? 'ayer'
+                : 'hace '+f.dias+' días';
+      h+='<tr><td>'+esc(f.linea)+'<div class="mini">'+esc(f.area)+'</div></td>'+
+         '<td class="num" style="color:'+col+'"><b>'+esc(txt)+'</b>'+
+         (f.fecha?'<div class="mini num">'+fmtFecha(f.fecha)+'</div>':'')+'</td></tr>';
+    });
+    h+='</table>'+(filas.length>18?'<p class="mini" style="margin-top:8px">Se muestran las 18 más antiguas.</p>':'')+'</div>';
+
+    /* ---- 2. Oportunidad y calidad ---- */
+    const LIMITE=45;
+    let aTiempo=0, tarde=0, sinFirmar=0, minutos=[];
+    data.forEach(x=>{
+      if(!x.sup_firma){ sinFirmar++; return; }
+      const ini=hm2min(x.hora_inicio), fir=hm2min(x.sup_hora);
+      if(ini==null||fir==null) return;
+      let dif=fir-ini; if(dif<-720) dif+=1440;      // turno que cruza medianoche
+      minutos.push(dif);
+      if(dif<=LIMITE) aTiempo++; else tarde++;
+    });
+    const conDato=aTiempo+tarde;
+    const pctT=conDato?Math.round(aTiempo*100/conDato):0;
+    const prom=minutos.length?Math.round(minutos.reduce((p,q)=>p+q,0)/minutos.length):null;
+    const modificadas=data.filter(x=>((x.contenido&&x.contenido.auditoria)||[]).some(z=>/anul\u00f3 la autorizaci\u00f3n/i.test(z.a||''))).length;
+    const devueltas=data.filter(x=>((x.contenido&&x.contenido.auditoria)||[]).some(z=>/devuelta a correcci\u00f3n/i.test(z.a||''))).length;
+    h+='<div class="card sec7"><h2>Oportunidad y calidad <span class="cnt">límite '+LIMITE+' min</span></h2>'+
+       '<p class="mini" style="margin:-4px 0 12px">Una AST está <b>a tiempo</b> cuando queda autorizada dentro de los '+LIMITE+
+       ' minutos posteriores a la hora de inicio declarada. Mide lo que sí depende del taller, sin suponer cuánto trabajo hubo.</p>'+
+       '<div class="vels">'+velocimetro(pctT,'Autorizadas dentro de '+LIMITE+' min',pctT+'%','#0E8A6E')+'</div>'+
+       '<div class="kpi" style="margin-top:12px">'+
+       '<div><b>'+aTiempo+'</b><small>A tiempo</small></div>'+
+       '<div><b>'+tarde+'</b><small>Fuera de plazo</small></div>'+
+       '<div><b>'+sinFirmar+'</b><small>Nunca autorizadas</small></div>'+
+       '<div><b>'+(prom!=null?prom+' min':'—')+'</b><small>Demora media desde el inicio</small></div>'+
+       '<div><b>'+devueltas+'</b><small>Devueltas a corrección</small></div>'+
+       '<div><b>'+modificadas+'</b><small>Modificadas tras firmar</small></div>'+
+       '</div>'+
+       (sinFirmar?'<p class="msg e" style="margin-top:12px">'+sinFirmar+' AST del período nunca fueron autorizadas. Revísalas en Revisión de AST.</p>':'')+
+       (tarde?'<p class="msg i" style="margin-top:10px">'+tarde+' AST se autorizaron pasados los '+LIMITE+
+        ' minutos del inicio. Ese tiempo es trabajo detenido o trabajo iniciado sin autorización.</p>':'')+
+       '</div>';
   }
 
   const etp={}; data.forEach(x=>((x.contenido&&x.contenido.etapas)||[]).forEach(e=>{etp[e.etapa]=(etp[e.etapa]||0)+1;}));
@@ -2095,31 +2325,32 @@ async function renderPanel(){
   h+='<div class="grid">';
   Object.keys(AREAS).forEach(k=>{
     const L=lineasDe(k);
-    const firmadas=L.filter(x=>estadoReal(data.find(d=>d.area===k&&d.linea===x.id))==='firmada').length;
+    const Lc=L.filter(x=>!esOtros(x.id));
+    const firmadas=Lc.filter(x=>estadoReal(data.find(d=>d.area===k&&d.linea===x.id))==='firmada').length;
     const rojas=L.filter(x=>estadoReal(data.find(d=>d.area===k&&d.linea===x.id))==='pendiente').length;
     h+='<div class="tile" role="button" tabindex="0" '+tinte(k)+' onclick="ir(\''+k+'\')">'+
        '<div class="bar" style="background:'+(rojas?'var(--rojo)':(firmadas?'var(--verde)':'var(--ac)'))+'"></div>'+
        (rojas?'<div class="pin">'+rojas+'</div>':'')+
        '<div class="in">'+icono(k)+'<b>'+AREAS[k].n+'</b>'+
-       '<small>'+firmadas+' de '+L.length+' autorizadas</small>'+
-       '<div class="prog"><i style="width:'+Math.round(firmadas*100/L.length)+'%"></i></div></div></div>';
+       '<small>'+firmadas+' de '+Lc.length+' autorizadas</small>'+
+       '<div class="prog"><i style="width:'+Math.round(firmadas*100/Math.max(1,Lc.length))+'%"></i></div></div></div>';
   });
   h+='</div>';
-  h+='<div class="card" style="margin-top:14px"><h2>Código QR de ingreso</h2>'+
-     '<p class="mini">Un solo QR para todo el taller, apunta a esta pantalla. Se genera cuando la aplicación esté publicada.</p>'+
-     (EN_SERVIDOR?'<p class="mini num" style="word-break:break-all">'+location.origin+location.pathname+'</p>':'')+'</div>';
-  h+='<div class="card"><h2>Modo de trabajo</h2><p class="mini">'+
-     (MODO_LOCAL?'Estás en <b>modo prueba</b>: todo se guarda solo en este dispositivo.'
-               :'Conectado a la nube. Los datos se comparten con todo el taller.')+'</p></div>';
+  if(esAdmin()){
+    h+='<div class="card" style="margin-top:14px"><h2>Dirección para el código QR</h2>'+
+       '<p class="mini num" style="word-break:break-all">'+location.origin+location.pathname+'</p></div>';
+  }
+  if(esAdmin()){
+    h+='<div class="card"><h2>Estado del sistema</h2><p class="mini">'+
+       (NUBE?'<b>Conectado a la nube.</b> Las AST se comparten con todo el taller en tiempo real.'
+            :'<b>Sin conexión con la nube.</b> Revisa la señal; la app reintenta sola.')+
+       '<br>Versión '+CONFIG.VERSION+' · '+esc(location.host)+'</p></div>';
+  }
   $('#app').innerHTML=h;
   const b=[];
   if(esSupervision()) b.push([rojasTotal?('Firmar ('+rojasTotal+')'):'Firmas pendientes',rojasTotal?'dan':'sec',()=>{vista='firmas';render();}]);
   if(esAdmin()) b.push(['Agregar nueva área','',()=>editarArea(null)]);
   b.push(['Actualizar','sec',()=>renderPanel()]);
-  if(MODO_LOCAL){
-    b.push(['Borrar datos de prueba','dan',async()=>{ if(await pregunta('¿Borrar las AST de prueba y la configuración guardada en este dispositivo?','Borrar')){LOCAL.borrar();renderPanel();toast('Datos de prueba borrados');} }]);
-    b.push(['Usar la nube','sec',()=>{ MODO_LOCAL=false; localStorage.removeItem('ast_modo'); pintaModo(); renderPanel(); }]);
-  }else b.push(['Modo prueba','sec',()=>{ MODO_LOCAL=true; localStorage.setItem('ast_modo','local'); pintaModo(); renderPanel(); }]);
   barra(b);
 }
 
@@ -2699,7 +2930,7 @@ function pintaLateral(){
   if(sup){
     h+=navItem('Firmas pendientes','✍', vista==='firmas', "menuVista('firmas')", PENDS||'');
     h+=navItem('Estadísticas','◔', vista==='stats', "menuVista('stats')");
-    h+=navItem('Guardados','▤', vista==='archivo', "menuVista('archivo')");
+    h+=navItem('AST guardadas','▤', vista==='archivo', "menuVista('archivo')");
     h+=navItem('Revisión de AST','\uD83D\uDD0E', vista==='revision', "menuVista('revision')");
   }
   h+=navItem('Avisos del dispositivo','◉', false, "abrirMenu(false);pedirAvisos()");
@@ -2727,7 +2958,10 @@ function pintaLateral(){
   h+='<div class="lat-sec">Tu identificación</div>';
   h+=navItem(IDENT?IDENT.nombre:'Identificarme','\uD83D\uDE0E', false, "abrirMenu(false);vista='ident';render()");
   h+='<div class="lat-pie">'+esc(CONFIG.EMPRESA)+'<br>'+esc(CONFIG.SUCURSAL)+'<br>'+
-     (MODO_LOCAL?'Modo prueba':'Conectado a la nube')+'<br>Versión '+CONFIG.VERSION+'</div>';
+     (!EN_SERVIDOR ? 'Vista previa local'
+                   : (NUBE?'<span style="color:#7BD69B">● Conectado a la nube</span>'
+                          :'<span style="color:#F0A0A0">● Sin conexión</span>'))+
+     '<br>Versión '+CONFIG.VERSION+'</div>';
   L.innerHTML=h;
 }
 async function salirForm(){
@@ -2864,9 +3098,11 @@ function cambiarDesdePortada(){
     render();
   }
   setTimeout(purgar,2500);
+  probarNube(true);
+  setInterval(()=>probarNube(true),45000);
   setTimeout(()=>enviarCola(false),1500);
   setInterval(()=>enviarCola(false),30000);
-  timer=setInterval(()=>{ if(puedeRefrescar()) refrescar(); }, CONFIG.REFRESCO_SEG*1000);
+  timer=setInterval(refrescoAuto, CONFIG.REFRESCO_SEG*1000);
 })();
 
 </script>
