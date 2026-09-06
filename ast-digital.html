@@ -524,7 +524,7 @@ const CONFIG = {
   CLAVE_ADMIN : 'Nsgb1290',            // clave de respaldo opcional; la clave normal es la fecha DDMMAAAA
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '1.1',
+  VERSION : '1.2',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -680,14 +680,17 @@ function nombreBloque(b){
   return null;
 }
 
-function pregunta(txt,okTxt){
+function pregunta(txt,okTxt,doble){
   return new Promise(function(res){
+    const solo = (doble===false);          // aviso de un solo botón
     const o=document.createElement('div'); o.className='ovl';
-    o.innerHTML='<div class="dlg"><p>'+esc(txt)+'</p><div class="par">'+
-      '<button class="sec">Cancelar</button><button class="dan">'+esc(okTxt||'Confirmar')+'</button></div></div>';
+    o.innerHTML='<div class="dlg"><p>'+esc(txt).replace(/\n/g,'<br>')+'</p><div class="par">'+
+      (solo?'':'<button class="sec">Cancelar</button>')+
+      '<button class="'+(solo?'':'dan')+'">'+esc(okTxt||'Confirmar')+'</button></div></div>';
     const bs=o.querySelectorAll('button');
-    bs[0].onclick=function(){o.remove();res(false);};
-    bs[1].onclick=function(){o.remove();res(true);};
+    if(solo){ bs[0].onclick=function(){o.remove();res(true);}; }
+    else{ bs[0].onclick=function(){o.remove();res(false);};
+          bs[1].onclick=function(){o.remove();res(true);}; }
     document.body.appendChild(o);
   });
 }
@@ -958,6 +961,7 @@ function leerURL(){
   LIN = AREA ? (P.get('linea') || (lineasDe(AREA)?null:'UNICA')) : null;
 }
 async function ir(area,linea){
+  vistaNueva=true;
   AREA = (area && AREAS[area]) ? area : null;
   LIN  = AREA ? (linea || (lineasDe(AREA) ? null : 'UNICA')) : null;
   vista=''; ast=null; parts=[]; archivoAbierto=false;
@@ -1027,6 +1031,26 @@ function puedeRefrescar(){
   if(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return false; // está escribiendo
   return true;
 }
+/* Refresco discreto: consulta liviana, y solo repinta si algo cambió de verdad. */
+let sigDatos=null;          // huella de los datos ya mostrados
+let vistaNueva=true;        // acaba de navegar: la pantalla ya está al día
+let ultimoMov=0;            // último gesto del usuario
+['scroll','touchstart','touchmove','pointerdown','wheel','keydown'].forEach(ev=>{
+  window.addEventListener(ev,()=>{ ultimoMov=Date.now(); },{passive:true});
+});
+async function huellaDatos(){
+  const f=hoy();
+  if(AREA && LIN){
+    const r=await api('ast_registros?fecha=eq.'+f+'&area=eq.'+encodeURIComponent(AREA)+
+      '&linea=eq.'+encodeURIComponent(LIN)+'&select=id,estado,sup_firma,actualizado&limit=1');
+    const x=r&&r[0];
+    if(!x) return 'sin-ast';
+    const ps=await api('ast_participantes?ast_id=eq.'+x.id+'&select=id');
+    return [x.id,x.estado,x.sup_firma?'f':'-',x.actualizado,(ps||[]).length].join('|');
+  }
+  const r=await api('ast_registros?fecha=eq.'+f+'&select=id,estado,sup_firma,actualizado');
+  return (r||[]).map(x=>[x.id,x.estado,x.sup_firma?'f':'-',x.actualizado].join('~')).sort().join(',');
+}
 async function refrescoAuto(){
   if(!IDENT) return;
   if(VISTAS_FORM.indexOf(vista)>=0) return;          // formularios abiertos
@@ -1036,6 +1060,14 @@ async function refrescoAuto(){
   if(document.querySelector('.ovl')) return;          // hay un cuadro de confirmación
   const lat=$('#lateral');
   if(lat && lat.classList.contains('open')) return;   // menú abierto
+  if(Date.now()-ultimoMov < 5000) return;             // está desplazando o tocando: no se interrumpe
+
+  let sig;
+  try{ sig=await huellaDatos(); }catch(e){ return; }
+  if(vistaNueva){ sigDatos=sig; vistaNueva=false; return; }   // recién cargado, ya está al día
+  if(sig===sigDatos) return;                                  // nada cambió: no se toca la pantalla
+  sigDatos=sig;
+
   const y=window.scrollY||document.documentElement.scrollTop||0;
   try{
     if(AREA && LIN) await refrescar();
@@ -3004,7 +3036,8 @@ function arriba(){ window.scrollTo(0,0);
   if(tp) tp.classList.remove('compact');
   compacto=false; setTimeout(ajustaTope,0); }
 function menuIr(a){ abrirMenu(false); vista=''; ir(a); }
-function menuVista(v){ abrirMenu(false); AREA=null; LIN=null; ast=null; archivoAbierto=false; vista=v; render(); }
+function menuVista(v){
+  vistaNueva=true; abrirMenu(false); AREA=null; LIN=null; ast=null; archivoAbierto=false; vista=v; render(); }
 let destinoSesion='super';
 function irSesion(s){
   abrirMenu(false);
