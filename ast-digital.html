@@ -524,7 +524,7 @@ const CONFIG = {
   CLAVE_ADMIN : 'Nsgb1290',            // clave de respaldo opcional; la clave normal es la fecha DDMMAAAA
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '1.2',
+  VERSION : '1.3',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -1344,7 +1344,9 @@ function renderAST(){
 
   h+='<div class="card sec6"><h2><span class="bdg">6</span>Participantes <span class="cnt">'+parts.length+' registrados</span></h2>'+
      '<p class="mini">'+esc(DECLARACION)+'</p>';
-  if(!parts.length) h+='<p class="mini" style="margin-top:10px">Nadie se ha registrado todavía.</p>';
+  if(!parts.length) h+='<p class="mini" style="margin-top:10px">Nadie se ha registrado todavía. '+
+    'La AST puede autorizarse igual: queda cubierta por el colaborador que la creó y firmó.</p>';
+  else if(est==='firmada') h+='<p class="mini" style="margin-top:8px">Quien se incorpore al trabajo puede registrarse aquí, aunque la AST ya esté autorizada.</p>';
   else parts.forEach((p,i)=>{
     h+='<div class="traza"><div class="t-a"><b>'+(i+1)+'. '+esc(p.nombre)+'</b>'+(p.firma?' <img src="'+p.firma+'" style="height:26px;vertical-align:middle">':'')+'</div>'+
        '<div class="mini"><span class="num">'+esc(p.rut||'')+'</span> · '+esc(p.cargo||'')+' · '+esc(p.empresa||'')+' · <span class="num">'+esc(p.hora||'')+'</span></div>'+
@@ -1371,7 +1373,8 @@ function renderAST(){
 
   const b=[];
   if(archivoAbierto){ barra([['Guardar PDF','',imprimir],['Descargar copia','sec',descargar],['Volver a AST guardadas','sec',volverArchivo]]); return; }
-  if(est!=='vencida'&&est!=='anulada'&&est!=='archivada') b.push(['Registrarme','',()=>{vista='registro';render();}]);
+  if(est!=='vencida'&&est!=='anulada'&&est!=='archivada')
+    b.push([parts.length?'Registrarme':'Registrarme (sumarme a la AST)','',()=>{vista='registro';render();}]);
   if(est==='borrador') b.push(['Completar AST','sec',()=>{vista='crear';render();}]);
   if(est==='firmada') b.push(['Modificar AST','sec',modificarFirmada]);
   if(est==='pendiente') b.push(['Firmar como supervisor','ok',()=>{esSup=false;vista='firma';render();}]);
@@ -1752,6 +1755,11 @@ function renderFirma(){
      fila('Vigencia',(ast.hora_inicio||'')+' a '+(ast.hora_fin||''))+
      fila('Etapas',(c.etapas||[]).length)+fila('Participantes',parts.length)+'</table></div>';
 
+  if(!parts.length){
+    h+='<div class="msg i"><b>Sin participantes registrados todavía.</b><br>'+
+       'Puedes autorizar igual: la AST queda cubierta por el colaborador que la creó y firmó. '+
+       'Quien se sume después se registra en la misma AST, aunque ya esté autorizada.</div>';
+  }
   h+='<div class="card sec5"><h2>Si vas a devolverla</h2>'+
      '<p class="mini" style="margin:-4px 0 11px">Marca el motivo y explica qué corregir. El responsable lo verá al abrir la AST.</p>'+
      '<div id="d_mot"></div>'+
@@ -1781,7 +1789,6 @@ async function firmar(){
   if(!document.querySelector('#s_nom')) return;
   if(!V('#s_nom').trim()) return toast('Falta el nombre del supervisor');
   if(padVacio) return toast('Falta la firma');
-  if(!parts.length) return toast('No hay participantes registrados');
   const cont=conTraza('Firmó y autorizó');
   try{
     await api('ast_registros?id=eq.'+ast.id,{method:'PATCH',body:JSON.stringify({estado:'firmada',
