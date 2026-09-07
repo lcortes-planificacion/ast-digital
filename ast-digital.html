@@ -524,7 +524,7 @@ const CONFIG = {
   CLAVE_ADMIN : 'Nsgb1290',            // clave de respaldo opcional; la clave normal es la fecha DDMMAAAA
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '1.3',
+  VERSION : '1.5',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -1344,14 +1344,18 @@ function renderAST(){
 
   h+='<div class="card sec6"><h2><span class="bdg">6</span>Participantes <span class="cnt">'+parts.length+' registrados</span></h2>'+
      '<p class="mini">'+esc(DECLARACION)+'</p>';
-  if(!parts.length) h+='<p class="mini" style="margin-top:10px">Nadie se ha registrado todavía. '+
-    'La AST puede autorizarse igual: queda cubierta por el colaborador que la creó y firmó.</p>';
-  else if(est==='firmada') h+='<p class="mini" style="margin-top:8px">Quien se incorpore al trabajo puede registrarse aquí, aunque la AST ya esté autorizada.</p>';
-  else parts.forEach((p,i)=>{
+  if(!parts.length){
+    h+='<p class="mini" style="margin-top:10px">Nadie se ha registrado todavía. '+
+       'La AST puede autorizarse igual: queda cubierta por el colaborador que la creó y firmó.</p>';
+  } else {
+    if(est==='firmada')
+      h+='<p class="mini" style="margin-top:8px">Quien se incorpore al trabajo puede registrarse aquí, aunque la AST ya esté autorizada.</p>';
+    parts.forEach((p,i)=>{
     h+='<div class="traza"><div class="t-a"><b>'+(i+1)+'. '+esc(p.nombre)+'</b>'+(p.firma?' <img src="'+p.firma+'" style="height:26px;vertical-align:middle">':'')+'</div>'+
        '<div class="mini"><span class="num">'+esc(p.rut||'')+'</span> · '+esc(p.cargo||'')+' · '+esc(p.empresa||'')+' · <span class="num">'+esc(p.hora||'')+'</span></div>'+
        (p.animo?'<div class="mini">Estado: '+esc(p.animo)+' · ¿Afecta la tarea?: '+esc(p.afecta||'—')+'</div>':'')+'</div>';
-  });
+    });
+  }
   h+='</div>';
 
 
@@ -1971,7 +1975,9 @@ async function renderArchivo(){
     [['','Todas'],['firmada','Solo autorizadas'],['sinfirma','Sin firma de supervisión'],['anteriores','De días anteriores']]
       .map(o=>'<option value="'+o[0]+'"'+(filtroEst===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+
     '</select></div>';
-  h+='<div class="msg i">Las AST se conservan '+CONFIG.DIAS_RETENCION+' días y después se eliminan automáticamente. '+
+  h+='<div class="msg i">'+
+     (esAdmin()?'<b>Administrador:</b> puedes eliminar una AST con el botón rojo. Queda anotado en el Registro de cambios.<br>':'')+
+     'Las AST se conservan '+CONFIG.DIAS_RETENCION+' días y después se eliminan automáticamente. '+
      'Descarga en PDF lo que necesites conservar más tiempo.</div>';
   h+='<div class="card"><h2>'+data.length+' AST encontradas</h2>';
   if(!data.length) h+='<p class="mini">No hay AST guardadas en este período.</p>';
@@ -1984,7 +1990,9 @@ async function renderArchivo(){
        '<div class="mini">'+esc(x.responsable||'sin responsable')+(x.ran?' · '+esc(x.ran):'')+
        (x.sup_nombre?' · firmó '+esc(x.sup_nombre):'')+'</div></div>'+
        '<div class="acc-item"><button class="sec sm" onclick="event.stopPropagation();pdfUna(\''+x.id+'\')">Descargar PDF</button>'+
-       '<button class="sec sm" onclick="abrirArchivo(\''+x.id+'\')">Ver</button></div></div>';
+       '<button class="sec sm" onclick="abrirArchivo(\''+x.id+'\')">Ver</button>'+
+       (esAdmin()?'<button class="dan sm" onclick="event.stopPropagation();borrarAST(\''+x.id+'\')">Eliminar</button>':'')+
+       '</div></div>';
   });
   h+='</div>';
   $('#app').innerHTML=h;
@@ -2029,6 +2037,35 @@ function astImpresa(x,ps){
   }
   if(x.sup_firma) s+='<p class="mini" style="margin-top:8px">Autorizada por '+esc(x.sup_nombre||'')+' a las '+esc(x.sup_hora||'')+'</p><img src="'+x.sup_firma+'" style="height:52px">';
   return s+'</div>';
+}
+async function borrarAST(id){
+  if(!esAdmin()) return toast('Solo el administrador puede eliminar una AST');
+  let x=null;
+  try{
+    const r=await api('ast_registros?id=eq.'+id+'&limit=1');
+    x=r&&r[0];
+  }catch(e){ return toast('No se pudo leer la AST: '+e.message); }
+  if(!x) return toast('No se encontró la AST');
+  const e1=estadoReal(x);
+  const detalle=tituloGuardado(x)+' · '+fmtFecha(x.fecha)+' · '+(x.responsable||'sin responsable');
+  const ok=await pregunta(
+    'Vas a ELIMINAR esta AST y todas sus firmas:\n\n'+detalle+'\nEstado: '+ETIQ[e1][0]+
+    '\n\nSe borra también el registro de sus participantes. Esta acción no se puede deshacer '+
+    'y la AST deja de existir como respaldo.','Eliminar');
+  if(!ok) return;
+  const ok2=await pregunta('Confirma otra vez: se elimina de forma definitiva.','Sí, eliminar');
+  if(!ok2) return;
+  try{
+    await api('ast_participantes?ast_id=eq.'+id,{method:'DELETE'});
+    await api('ast_registros?id=eq.'+id,{method:'DELETE'});
+    logCFG('AST eliminada por el administrador', detalle+' · estado '+ETIQ[e1][0]);
+    try{ await guardarCFG(); }catch(e){}
+    toast('AST eliminada');
+    renderArchivo();
+  }catch(e){
+    if(e.cola) toast('Sin conexión: la eliminación quedó en cola.');
+    else toast('Error al eliminar: '+e.message);
+  }
 }
 async function pdfUna(id){
   try{
