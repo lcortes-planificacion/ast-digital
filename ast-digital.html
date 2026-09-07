@@ -524,7 +524,7 @@ const CONFIG = {
   CLAVE_ADMIN : 'Nsgb1290',            // clave de respaldo opcional; la clave normal es la fecha DDMMAAAA
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '1.5',
+  VERSION : '1.6',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -1118,6 +1118,7 @@ function render(){
     if(vista==='adm-gen'){ admGen(); return; }
     if(vista==='adm-sup'){ admSup(); return; }
     if(vista==='adm-log'){ admLog(); return; }
+    if(vista==='adm-insc'){ admInscripcion(); return; }
     if(['stats','archivo','firmas'].indexOf(vista)>=0 && !esSupervision()){ vista='acceso'; renderAcceso(); return; }
     if(vista==='stats'){ renderStats(); return; }
     if(vista==='archivo'){ renderArchivo(); return; }
@@ -2826,6 +2827,107 @@ async function guardarSup(){
   if(await guardarCFG()){ toast('Supervisores guardados'); admSup(true); }
 }
 
+/* ---------- Inscripción en varias AST (solo administrador) ---------- */
+let INSC={sel:{}, data:[]};
+async function admInscripcion(){
+  if(!esAdmin()){ vista=''; render(); return; }
+  $('#titulo').textContent='Inscribirme en varias AST';
+  $('#meta').textContent='Administración';
+  $('#app').innerHTML='<p class="mini">Buscando las AST de hoy…</p>';
+  let data=[], yaEn={};
+  try{
+    data=await api('ast_registros?fecha=eq.'+hoy()+'&order=area.asc');
+    const ids=data.map(x=>x.id);
+    if(ids.length){
+      const ps=await api('ast_participantes?ast_id=in.('+ids.join(',')+')&select=ast_id,rut');
+      (ps||[]).forEach(p=>{ if(p.rut===IDENT.rut) yaEn[p.ast_id]=1; });
+    }
+  }catch(e){
+    $('#app').innerHTML='<div class="msg e">No se pudo leer.<br><span class="mini">'+esc(e.message)+'</span></div>';
+    barra([['Reintentar','sec',admInscripcion],['Inicio','sec',()=>{vista='';render();}]]); return;
+  }
+  data=data.filter(x=>{ const e=estadoReal(x); return e!=='anulada' && e!=='archivada'; });
+  const libres=data.filter(x=>!yaEn[x.id]);
+  INSC.data=libres;
+  libres.forEach(x=>{ if(INSC.sel[x.id]===undefined) INSC.sel[x.id]=false; });
+
+  let h='<div class="msg e"><b>Úsalo solo si participaste de verdad en esas tareas.</b><br>'+
+    'Al inscribirte declaras haber participado en la charla previa y conocer los riesgos de cada AST. '+
+    'Marcar todas sin haberlas leído convierte la firma en un trámite y le quita valor al documento.</div>';
+  h+='<div class="card sec1"><h2>Tu identificación</h2><table>'+
+     fila('Nombre',IDENT.nombre)+fila('RUT',IDENT.rut)+fila('Cargo',IDENT.cargo||'—')+'</table></div>';
+
+  h+='<div class="card sec6"><h2>AST de hoy <span class="cnt">'+libres.length+' disponibles</span></h2>';
+  if(!libres.length){
+    h+='<p class="mini">No hay AST donde puedas inscribirte: o no existen aún, o ya estás registrado en todas.</p>';
+  } else {
+    h+='<div class="row" style="margin-bottom:10px">'+
+       '<button class="sec sm" onclick="inscTodas(true)">Marcar todas</button>'+
+       '<button class="sec sm" onclick="inscTodas(false)">Ninguna</button></div>';
+    libres.forEach(x=>{
+      const e=estadoReal(x), c=x.contenido||{};
+      h+='<div class="item" style="border-left-color:'+COLOR[e]+'">'+
+         '<div class="chk"><input type="checkbox" id="ic_'+x.id+'" '+(INSC.sel[x.id]?'checked':'')+
+         ' onchange="INSC.sel[\''+x.id+'\']=this.checked"><span><b>'+esc(tituloGuardado(x))+'</b>'+
+         '<div class="mini">'+ETIQ[e][0]+' · '+esc(c.descripcion||'sin descripción')+'</div>'+
+         '<div class="mini">'+esc(x.responsable||'')+(x.hora_inicio?' · '+esc(x.hora_inicio)+'–'+esc(x.hora_fin||''):'')+
+         '</div></span></div></div>';
+    });
+  }
+  h+='</div>';
+
+  if(libres.length){
+    h+='<div class="card sec2"><h2>¿Cómo te sientes hoy?</h2><div id="d_emo2" class="emos"></div>'+
+       '<label>¿Podría afectar la tarea?</label><select id="i_afecta">'+
+       AFECTA.map(o=>'<option>'+esc(o)+'</option>').join('')+'</select></div>';
+    h+='<div class="card sec6"><h2>Declaración</h2><p class="mini">'+esc(DECLARACION)+'</p>'+
+       '<div class="chk" style="margin-top:10px"><input type="checkbox" id="i_dec"><span>Declaro lo anterior para cada AST que marqué</span></div>'+
+       '<label style="margin-top:12px">Tu firma</label><canvas class="pad" id="pad"></canvas>'+
+       '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button></div>';
+  }
+  $('#app').innerHTML=h;
+  if(libres.length){
+    pintaEmos2();
+    iniciarPad($('#pad'));
+    barra([['Inscribirme en las marcadas','',inscribirVarias],
+           ['Inicio','sec',()=>{vista='';render();}]]);
+  } else {
+    barra([['Actualizar','sec',admInscripcion],['Inicio','sec',()=>{vista='';render();}]]);
+  }
+}
+let INSC_ANIMO='';
+function pintaEmos2(){
+  const el=$('#d_emo2'); if(!el) return;
+  el.innerHTML=ANIMOS.map(a=>'<span class="e'+(INSC_ANIMO===a[0]?' on':'')+'" onclick="INSC_ANIMO=\''+a[0]+'\';pintaEmos2()">'+
+    '<b>'+a[1]+'</b>'+esc(a[0])+'</span>').join('');
+}
+function inscTodas(v){ INSC.data.forEach(x=>{ INSC.sel[x.id]=v; }); admInscripcion(); }
+async function inscribirVarias(){
+  const ids=INSC.data.filter(x=>INSC.sel[x.id]).map(x=>x.id);
+  if(!ids.length) return toast('No marcaste ninguna AST');
+  if(!INSC_ANIMO) return toast('Indica cómo te sientes hoy');
+  if(!$('#i_dec') || !$('#i_dec').checked) return toast('Debes aceptar la declaración');
+  if(padVacio) return toast('Falta tu firma');
+  const ok=await pregunta('Te vas a inscribir como participante en '+ids.length+' AST.\n\n'+
+    'Solo hazlo si participaste realmente en esas tareas y conoces sus riesgos.','Inscribirme');
+  if(!ok) return;
+  const f=$('#pad').toDataURL('image/png'), afecta=V('#i_afecta');
+  let ok2=0, fallo=0;
+  for(const id of ids){
+    try{
+      await api('ast_participantes',{method:'POST',body:JSON.stringify({id:uuid(),ast_id:id,
+        nombre:IDENT.nombre, rut:IDENT.rut, cargo:IDENT.cargo||'', empresa:CONFIG.EMPRESA,
+        animo:INSC_ANIMO, afecta:afecta, firma:f, hora:ahoraHM(), creado:new Date().toISOString()})});
+      ok2++;
+    }catch(e){ fallo++; }
+  }
+  logCFG('Inscripción múltiple como participante', ok2+' AST · '+(IDENT&&IDENT.nombre||''));
+  try{ await guardarCFG(); }catch(e){}
+  INSC.sel={};
+  toast(ok2+' inscripción(es) registrada(s)'+(fallo?' · '+fallo+' con error':''));
+  admInscripcion();
+}
+
 /* ---------- Registro de cambios de configuración ---------- */
 function admLog(){
   $('#titulo').textContent='Registro de cambios';
@@ -3051,6 +3153,7 @@ function pintaLateral(){
     h+=navItem('Supervisores','\u2713', vista==='adm-sup', "menuVista('adm-sup')");
     h+=navItem('Ajustes generales','⚒', vista==='adm-gen', "menuVista('adm-gen')");
     h+=navItem('Registro de cambios','\u2637', vista==='adm-log', "menuVista('adm-log')");
+    h+=navItem('Inscribirme en varias AST','\u270D', vista==='adm-insc', "menuVista('adm-insc')");
   }
   h+='<div class="lat-sec">Sesiones</div>';
   h+=navItem('Sesión taller','\uD83E\uDDBA', SESION==='general', "irSesion('general')");
