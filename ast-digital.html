@@ -189,6 +189,17 @@ button.sm{padding:9px 12px;font-size:13px;width:auto;margin:0}
 .preg{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .preg:last-child{border-bottom:0}
 .preg .txt{flex:1;font-size:14px;line-height:1.35}
+.sn{display:flex;gap:8px;flex:0 0 auto}
+.sn-b{display:flex;align-items:center;justify-content:center;min-width:62px;padding:11px 14px;cursor:pointer;
+  font:800 14px/1 var(--f-disp);letter-spacing:.06em;border-radius:10px;border:1.5px solid var(--line);
+  background:linear-gradient(180deg,#FFFFFF,#F2F6FA);color:var(--acero);user-select:none;
+  box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(10,37,64,.06);transition:all .12s}
+.sn-b:active{transform:translateY(1px)}
+.sn-b.si.on{background:linear-gradient(180deg,#2AA353,#1B7F3B);border-color:#1B7F3B;color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 6px rgba(27,127,59,.3)}
+.sn-b.no.on{background:linear-gradient(180deg,#DB3A3A,#C62828);border-color:#C62828;color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 6px rgba(198,40,40,.3)}
+@media (max-width:420px){ .sn-b{min-width:56px;padding:11px 10px} }
 .preg select{width:92px;flex:none;padding:9px}
 
 /* ---- paso 5 ---- */
@@ -524,7 +535,7 @@ const CONFIG = {
   CLAVE_ADMIN : 'Nsgb1290',            // clave de respaldo opcional; la clave normal es la fecha DDMMAAAA
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '1.6',
+  VERSION : '1.7',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -1124,6 +1135,7 @@ function render(){
     if(vista==='archivo'){ renderArchivo(); return; }
     if(vista==='firmas'){ renderFirmas(); return; }
     if(vista==='revision'){ renderRevision(); return; }
+    if(vista==='personal'){ renderPersonal(); return; }
     renderPanel(); return;
   }
   const A=AREAS[AREA];
@@ -1414,6 +1426,8 @@ function renderForm(){
 
   let h='<div class="msg i"><b>'+esc(D.titulo)+'</b><br>'+esc(tituloAL(AREA,LIN))+'</div>';
 
+  W.eppOk = (c.eppOk===undefined?null:c.eppOk);
+  W.herrOk= (c.herrOk===undefined?null:c.herrOk);
   W.animo=c.animo||'Bien'; W.firmaColab=c.firmaColab||'';
   h+='<div class="card sec1"><h2>Antecedentes generales</h2>'+
     '<label>Nombre colaborador</label><input id="f_resp" value="'+esc(ast&&ast.responsable?ast.responsable:IDENT.nombre)+'">'+
@@ -1473,8 +1487,8 @@ function renderForm(){
      '<button class="sec sm" style="flex:0 0 106px" onclick="addOtro(\'eq\')">Agregar</button></div>'+
      '<div id="d_eqotros" style="margin-top:9px"></div>'+
      '<div class="sub-h" style="margin-top:20px">Verificación de estado</div>'+
-     '<label>EPP en buenas condiciones</label><select id="f_eppok">'+opcSN(c.eppOk)+'</select>'+
-     '<label>Check list de herramientas al día</label><select id="f_herrok">'+opcSN(c.herrOk)+'</select>'+
+     '<div class="preg" style="margin-top:12px"><div class="txt">EPP en buenas condiciones</div><span id="d_eppok"></span></div>'+
+     '<div class="preg"><div class="txt">Check list de herramientas al día</div><span id="d_herrok"></span></div>'+
      '<label>Observación / condiciones</label><textarea id="f_obs">'+esc(c.observacion||'')+'</textarea></div>';
 
   h+='<div class="card sec5"><h2><span class="bdg">5</span>Paso 5 · Riesgos que aplican <span class="cnt" id="c_etapas"></span>'+edLink('adm-doc')+'</h2>'+
@@ -1484,7 +1498,7 @@ function renderForm(){
      '<button class="sec" onclick="addExtra()">+ Agregar etapa propia</button></div>';
 
   $('#app').innerHTML=h;
-  pintaPreg(); pintaChips(); pintaEtapas(); pintaExtra(); pintaEmo(); iniciarPad($('#pad'));
+  pintaPreg(); pintaVerif(); pintaChips(); pintaEtapas(); pintaExtra(); pintaEmo(); iniciarPad($('#pad'));
   barra([['Enviar a firma','dan',()=>guardar('pendiente')],
          ['Guardar borrador y salir','sec',()=>guardar('borrador')],
          ['Salir sin guardar','sec',salirForm]]);
@@ -1496,12 +1510,26 @@ function pintaEmo(){
 }
 function opcSN(v){return '<option value="">—</option><option value="1"'+(v===true?' selected':'')+'>SÍ</option><option value="0"'+(v===false?' selected':'')+'>NO</option>';}
 function setTurno(){const t=$('#f_turno').value;if(TURNOS[t]){$('#f_ini').value=TURNOS[t][0];$('#f_fin').value=TURNOS[t][1];}}
+function botonesSN(campo,i,v){
+  return '<div class="sn">'+
+    '<span class="sn-b si'+(v===true?' on':'')+'" onclick="setSN(\''+campo+'\','+i+',true)">SÍ</span>'+
+    '<span class="sn-b no'+(v===false?' on':'')+'" onclick="setSN(\''+campo+'\','+i+',false)">NO</span></div>';
+}
+function setSN(campo,i,val){
+  if(campo==='eppOk'||campo==='herrOk'){ W[campo]=(W[campo]===val)?null:val; pintaVerif(); return; }
+  W[campo][i]=(W[campo][i]===val)?null:val;
+  pintaPreg();
+}
 function pintaPreg(){
   [['q1','p1',CAT.p1],['q2','p2',CAT.p2],['q3','p3',CAT.p3]].forEach(g=>{
     $('#'+g[0]).innerHTML=g[2].map((p,i)=>
-      '<div class="preg"><div class="txt">'+esc(p)+'</div>'+
-      '<select onchange="W.'+g[1]+'['+i+']=this.value===\'\'?null:this.value===\'1\'">'+opcSN(W[g[1]][i])+'</select></div>').join('');
+      '<div class="preg"><div class="txt">'+esc(p)+'</div>'+botonesSN(g[1],i,W[g[1]][i])+'</div>').join('');
   });
+}
+function pintaVerif(){
+  const a=$('#d_eppok'), b=$('#d_herrok');
+  if(a) a.innerHTML=botonesSN('eppOk',0,W.eppOk);
+  if(b) b.innerHTML=botonesSN('herrOk',0,W.herrOk);
 }
 function pintaChips(){
   $('#d_epp').innerHTML='<div class="pills">'+CAT.epp.map((e,i)=>
@@ -1625,8 +1653,8 @@ async function guardar(estado){
     firmaColab: padVacio ? (prev.firmaColab||'') : $('#pad').toDataURL('image/png'),
     p1:W.p1, p2:W.p2, p3:W.p3, comentario:$('#f_com').value.trim(),
     epp:W.epp.concat(W.eppOtros||[]), equipos:W.equipos.concat(W.eqOtros||[]),
-    eppOk:$('#f_eppok').value===''?null:$('#f_eppok').value==='1',
-    herrOk:$('#f_herrok').value===''?null:$('#f_herrok').value==='1',
+    eppOk:(W.eppOk===undefined?null:W.eppOk),
+    herrOk:(W.herrOk===undefined?null:W.herrOk),
     observacion:$('#f_obs').value.trim(), etapas:etapas,
     auditoria:((ast&&ast.contenido&&ast.contenido.auditoria)||[]) };
   cont.areaN=AREAS[AREA]?AREAS[AREA].n:AREA;
@@ -1774,7 +1802,9 @@ function renderFirma(){
   h+='<div class="card sec7"><h2>Autorización</h2><label>Nombre del supervisor</label><input id="s_nom" value="'+esc(ast.sup_nombre||IDENT.nombre)+'">'+
      '<label>Observaciones de la firma (opcional)</label><textarea id="s_obs"></textarea>'+
      '<label>Firma</label><canvas class="pad" id="pad"></canvas>'+
-     '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button></div>';
+     '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button>'+
+     '<button class="ok" style="margin-top:16px" onclick="firmar()">Firmar y autorizar la AST</button>'+
+     '<button class="dan" style="margin-top:10px" onclick="devolver()">Devolver a corrección</button></div>';
   $('#app').innerHTML=h;
   W.mot=[]; pintaMotivos();
   iniciarPad($('#pad'));
@@ -1904,6 +1934,84 @@ async function abrirParaFirmar(id){
     parts=await api('ast_participantes?ast_id=eq.'+ast.id+'&order=creado.asc');
     esSup=false; vista='firma'; render(); window.scrollTo(0,0);
   }catch(e){ toast('Error: '+e.message); }
+}
+
+/* ---------- Personal registrado en todas las AST ---------- */
+let perDias=1, perModo='persona';
+async function renderPersonal(){
+  $('#titulo').textContent='Personal registrado';
+  $('#meta').textContent='Todas las áreas';
+  $('#app').innerHTML='<p class="mini">Buscando…</p>';
+  let data=[], ps=[];
+  try{
+    data=await api('ast_registros?fecha=gte.'+fechaMenos(perDias)+'&order=fecha.desc&limit=800');
+    const ids=data.map(x=>x.id);
+    if(ids.length){
+      for(let i=0;i<ids.length;i+=60){
+        const lote=await api('ast_participantes?ast_id=in.('+ids.slice(i,i+60).join(',')+')&order=creado.asc');
+        ps=ps.concat(lote||[]);
+      }
+    }
+  }catch(e){
+    $('#app').innerHTML='<div class="msg e">No se pudo leer.<br><span class="mini">'+esc(e.message)+'</span></div>';
+    barra([['Reintentar','sec',renderPersonal],['Inicio','sec',()=>{vista='';render();}]]); return;
+  }
+  const porId={}; data.forEach(x=>{ porId[x.id]=x; });
+  const personas={};
+  ps.forEach(p=>{
+    const k=(p.rut||p.nombre||'—');
+    if(!personas[k]) personas[k]={nombre:p.nombre,rut:p.rut,cargo:p.cargo,empresa:p.empresa,regs:[]};
+    personas[k].regs.push(p);
+  });
+  const nombres=Object.keys(personas).sort((x,y)=>personas[x].nombre.localeCompare(personas[y].nombre));
+
+  let h='<div class="card sec1"><h2>Período</h2><select onchange="perDias=+this.value;renderPersonal()">'+
+    [[1,'Hoy'],[7,'Últimos 7 días'],[30,'Últimos 30 días'],[90,'Últimos 90 días']]
+      .map(o=>'<option value="'+o[0]+'"'+(perDias===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+
+    '<div class="kpi" style="margin-top:12px">'+
+      '<div><b>'+nombres.length+'</b><small>Personas distintas</small></div>'+
+      '<div><b>'+ps.length+'</b><small>Registros</small></div>'+
+      '<div><b>'+data.length+'</b><small>AST del período</small></div></div>'+
+    '<div class="pills" style="margin-top:12px">'+
+      '<span class="pill '+(perModo==='persona'?'on':'')+'" onclick="perModo=\'persona\';renderPersonal()"><span class="bx"></span>Por persona</span>'+
+      '<span class="pill '+(perModo==='ast'?'on':'')+'" onclick="perModo=\'ast\';renderPersonal()"><span class="bx"></span>Por AST</span>'+
+    '</div></div>';
+
+  if(!ps.length){
+    h+='<div class="card"><p class="mini">Todavía no hay personal registrado en el período.</p></div>';
+  } else if(perModo==='persona'){
+    h+='<div class="card sec6"><h2>Por persona <span class="cnt">'+nombres.length+'</span></h2>';
+    nombres.forEach(k=>{
+      const P=personas[k];
+      h+='<div class="traza"><div class="t-a">'+esc(P.nombre)+
+         (P.rut?' · <span class="num">'+esc(P.rut)+'</span>':'')+
+         ' <span class="cnt">'+P.regs.length+' AST</span></div>'+
+         '<div class="mini">'+esc(P.cargo||'')+(P.empresa?' · '+esc(P.empresa):'')+'</div>';
+      P.regs.forEach(r=>{
+        const x=porId[r.ast_id]; if(!x) return;
+        const e=estadoReal(x);
+        h+='<div class="mini" style="margin-top:5px">· <b>'+esc(tituloGuardado(x))+'</b> — '+
+           fmtFecha(x.fecha)+' '+esc(r.hora||'')+' · <span style="color:'+COLOR[e]+'">'+ETIQ[e][0]+'</span></div>';
+      });
+      h+='</div>';
+    });
+    h+='</div>';
+  } else {
+    const conGente=data.filter(x=>ps.some(p=>p.ast_id===x.id));
+    h+='<div class="card sec6"><h2>Por AST <span class="cnt">'+conGente.length+'</span></h2>';
+    conGente.forEach(x=>{
+      const e=estadoReal(x), mios=ps.filter(p=>p.ast_id===x.id);
+      h+='<div class="traza"><div class="t-a">'+esc(tituloGuardado(x))+
+         ' <span class="cnt">'+mios.length+' persona(s)</span></div>'+
+         '<div class="mini num">'+fmtFecha(x.fecha)+' · <span style="color:'+COLOR[e]+'">'+ETIQ[e][0]+'</span></div>'+
+         '<div class="mini" style="margin-top:4px">'+mios.map(p=>esc(p.nombre)+(p.hora?' ('+esc(p.hora)+')':'')).join(' · ')+'</div></div>';
+    });
+    const sinGente=data.length-conGente.length;
+    h+='</div>';
+    if(sinGente) h+='<p class="msg i">'+sinGente+' AST del período no tienen personal registrado.</p>';
+  }
+  $('#app').innerHTML=h;
+  barra([['Actualizar','sec',renderPersonal],['Inicio','sec',()=>{vista='';render();}]]);
 }
 
 /* ---------- Revisión de AST ---------- */
@@ -3136,6 +3244,7 @@ function pintaLateral(){
     h+=navItem('Estadísticas','◔', vista==='stats', "menuVista('stats')");
     h+=navItem('AST guardadas','▤', vista==='archivo', "menuVista('archivo')");
     h+=navItem('Revisión de AST','\uD83D\uDD0E', vista==='revision', "menuVista('revision')");
+    h+=navItem('Personal registrado','\uD83D\uDC65', vista==='personal', "menuVista('personal')");
   }
   h+=navItem('Avisos del dispositivo','◉', false, "abrirMenu(false);pedirAvisos()");
   if(ACC.length){
