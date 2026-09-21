@@ -39,7 +39,6 @@ body{font-family:var(--f-body);color:var(--ink);font-size:16px;line-height:1.45;
 #top{position:fixed;top:0;left:0;right:0;z-index:20;transform:translateZ(0);
   will-change:transform;backface-visibility:hidden;
   background:#0A2540;padding-top:env(safe-area-inset-top,0px)}
-@media (min-width:920px){ #top{left:250px} }
 #espacio{height:150px}
 /* la franja de peligro es siempre roja y blanca; el estado se lee en la placa */
 
@@ -64,7 +63,7 @@ header.compact .deco{display:none}
 @keyframes giro{to{transform:rotate(360deg)}}
 .brand{position:relative;font:600 10.5px/1.3 var(--f-disp);letter-spacing:.15em;text-transform:uppercase;color:#9EC3E8}
 .brand,.h-nav,.h-area,.h-meta,.quien{padding-right:118px}
-@media (min-width:920px){ .brand,.h-nav,.h-area,.h-meta,.quien{padding-right:66px} }
+
 .h-nav{position:relative;font-size:12.5px;color:#9EC3E8;margin-top:6px}
 .h-nav span{cursor:pointer;text-decoration:underline}
 .h-area{position:relative;font:800 24px/1.14 var(--f-disp);letter-spacing:-.015em;margin-top:5px;
@@ -79,7 +78,12 @@ header.compact .emb{width:23px;height:23px}
 .quien{position:relative;margin-top:9px;font-size:12.5px;color:#CFE1F1;cursor:pointer}
 .quien b{color:#fff} .quien u{color:#9EC3E8;margin-left:6px}
 
-.wrap{max-width:860px;margin:0 auto;padding:14px}
+.wrap{max-width:100%;margin:0 auto;padding:14px}
+@media (min-width:920px){ .wrap{max-width:1180px;padding:16px 22px} }
+/* las pantallas de mosaicos (áreas y líneas) usan la pantalla completa;
+   los formularios y fichas se quedan en un ancho cómodo de leer          */
+body.ancha .wrap{max-width:none}
+@media (min-width:920px){ body.ancha .wrap{max-width:none;padding:16px 26px} }
 .card{position:relative;background:linear-gradient(180deg,#FFFFFF 0%,#F8FAFD 100%);
   border:1px solid var(--line);border-radius:14px;padding:17px 16px 16px;margin-bottom:13px;overflow:hidden;
   box-shadow:var(--biselL),var(--biselD),0 1px 2px rgba(10,37,64,.07),0 10px 26px rgba(10,37,64,.07)}
@@ -251,6 +255,7 @@ canvas.pad{width:100%;height:158px;border:1.5px dashed #A9B7C4;border-radius:11p
 
 /* ---- mosaicos de área ---- */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:11px}
+@media (min-width:920px){ .grid{grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:14px} }
 .tile{position:relative;display:flex;flex-direction:column;
   background:linear-gradient(160deg,var(--acbg,#EAF2FC) 0%,#FFFFFF 46%,#FFFFFF 100%);border:1px solid var(--line);
   border-radius:14px;overflow:hidden;box-shadow:var(--sh);cursor:pointer;min-height:150px;
@@ -436,7 +441,7 @@ canvas.pad{width:100%;height:158px;border:1.5px dashed #A9B7C4;border-radius:11p
 .alerta .mini{color:#A34545}
 .alerta button{margin:0;flex:0 0 auto;padding:12px 18px;font-size:13.5px;letter-spacing:.06em;
   background:linear-gradient(180deg,#DB3A3A,#C62828)}
-@media (min-width:920px){ .alerta{left:calc(250px + 16px);right:16px;bottom:16px} }
+@media (min-width:920px){ .alerta{left:auto;right:16px;bottom:16px;max-width:480px} }
 .salir{position:absolute;right:66px;top:12px;width:44px;height:40px;border-radius:11px;cursor:pointer;z-index:3;
   border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:#fff;
   display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
@@ -448,37 +453,61 @@ canvas.pad{width:100%;height:158px;border:1.5px dashed #A9B7C4;border-radius:11p
   box-shadow:inset 0 3px 7px rgba(0,0,0,.35),0 0 0 4px rgba(255,255,255,.16)}
 .menu-btn{transition:transform .1s ease, background .12s ease}
 .menu-btn:active{transform:scale(.9);background:rgba(255,255,255,.24)}
-@media (min-width:920px){ .salir{right:14px} }
 header.compact .salir{top:7px;height:34px}
 .menu-btn{position:absolute;right:14px;top:12px;width:44px;height:40px;border-radius:11px;cursor:pointer;
   border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:4px;z-index:3;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
 .menu-btn i{display:block;width:18px;height:2px;background:#fff;border-radius:2px}
-.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:100;width:auto;
-  padding:15px 20px;border-radius:14px;font:700 15px/1 var(--f-disp);box-shadow:0 8px 24px rgba(10,37,64,.32);margin:0}
-.fab2{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:100;width:auto;margin:0;
-  padding:15px 20px;border-radius:14px;font:700 15px/1 var(--f-disp);
-  background:linear-gradient(180deg,#FFFFFF,#EBF0F6);color:var(--ink);border:1px solid #C2D0DC;
-  box-shadow:0 8px 24px rgba(10,37,64,.24)}
-@media (min-width:920px){ .fab2{left:calc(250px + 16px)} }
+.dock{position:fixed;right:10px;left:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:100;
+  display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end;
+  background:#FBFDFF;border:1px solid #C2D0DC;border-radius:15px;padding:9px;
+  box-shadow:0 10px 30px rgba(10,37,64,.26)}
+.dock .d-b{flex:1 1 calc(50% - 4px);min-width:120px;margin:0;padding:13px 10px;border-radius:10px;
+  font:700 14px/1.15 var(--f-disp);letter-spacing:.01em;cursor:pointer;border:1px solid transparent;
+  background:linear-gradient(180deg,#1A66C0,#0B4EA2);color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 2px 5px rgba(10,37,64,.18)}
+.dock .d-b:active{transform:translateY(1px)}
+.dock .d-b.ok{background:linear-gradient(180deg,#2AA353,#1B7F3B)}
+.dock .d-b.dan{background:linear-gradient(180deg,#DB3A3A,#C62828)}
+.dock .d-b.sec{background:linear-gradient(180deg,#FFFFFF,#EDF2F7);color:var(--acero);border-color:#C9D6E2;
+  font-size:12.5px;padding:10px 8px;box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(10,37,64,.1)}
+.dock .d-b:only-child{flex:1 1 100%}
+@media (min-width:640px){ .dock .d-b{flex:0 0 auto;min-width:0;padding-left:16px;padding-right:16px} }
 @media (min-width:920px){
-  #lateral{transform:none}
-  body{padding-left:250px}
-  .menu-btn,.velo{display:none}
-  .fab,.fab2{display:none!important}
+  .dock{left:auto;right:16px;bottom:16px;width:216px;flex-direction:column;align-items:stretch;
+    gap:5px;padding:8px;border-radius:14px;box-shadow:0 12px 32px rgba(10,37,64,.26)}
+  .dock .d-b{flex:0 0 auto;width:100%;padding:9px 11px;font-size:12.5px;border-radius:9px}
+  .dock .d-b.sec{font-size:11.5px;padding:8px 11px}
 }
-@media print{#lateral,.velo,.menu-btn,.salir,.fab,.fab2{display:none!important} body{padding-left:0}
-  .hazard,header,.modo{position:static!important}}
+/* ---- cabecera de una AST dentro de un documento ---- */
+.doc-cab{margin:0 0 14px;padding:13px 15px;border-radius:12px;background:#0B3A73;color:#fff}
+.doc-cab .doc-t{font:800 20px/1.2 var(--f-disp)}
+.doc-cab .doc-s{font-size:12px;color:#9EC3E8;margin-top:3px}
+.doc-cab .doc-e{display:inline-block;margin-top:9px;padding:5px 11px;border-radius:7px;background:rgba(255,255,255,.18);
+  font:700 11.5px/1 var(--f-disp);letter-spacing:.08em;text-transform:uppercase}
+.ast-doc{break-after:page;page-break-after:always}
+.ast-doc:last-child{break-after:auto;page-break-after:auto}
 
 @media print{
-  body{padding:0;background:#fff}
+  body{padding:0 !important;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   header{background:#fff;color:#000;border-bottom:2px solid #000}
     .brand,.h-meta,.h-nav,.quien{color:#333}
   .h-area{color:#000}
-  .bar-fija,button,.noprint,.cover{display:none!important}
-  .card{box-shadow:none;break-inside:avoid;page-break-inside:avoid;border-color:#999}
+  .bar-fija,button,.noprint,.cover,.dock,#dock,.emb-box,.deco{display:none!important}
+  #espacio{display:none!important}
+  #top,header{position:static!important}
+  .wrap{max-width:none;padding:0}
+
+  /* un bloque largo puede repartirse entre páginas, pero nunca se corta por dentro */
+  .card{box-shadow:none;border-color:#999;break-inside:auto;page-break-inside:auto;margin-bottom:10px}
+  .card h2{break-after:avoid;page-break-after:avoid}
+  .paso,.traza,.preg,.item,.kpi>div,.vel,.ros{break-inside:avoid;page-break-inside:avoid}
+  tr,th,td,.pill,.sub-h,img{break-inside:avoid;page-break-inside:avoid}
+  thead{display:table-header-group}
+  table{width:100%}
+  .doc-cab{break-after:avoid;page-break-after:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .hazard{height:6px}
-  @page{margin:12mm}
+  @page{margin:11mm}
 }
 </style>
 
@@ -519,8 +548,7 @@ header.compact .salir{top:7px;height:34px}
 <div class="cola" id="cola" style="display:none"></div>
 <div class="modo" id="modo" style="display:none"></div>
 <div class="wrap" id="app"></div>
-<button class="fab2" id="fab2" style="display:none"></button>
-<button class="fab" id="fab" style="display:none"></button>
+<div class="dock" id="dock" style="display:none"></div>
 
 <script>
 const CAT={"epp":["Casco de seguridad","Barbiquejo","Lentes de seguridad (claros/ oscuros)","Legionario","Antiparras","Lentes oxicorte","Protector auditivo o tapones","Respirador doble vía","Punteras","Mascara full face","Filtro de gases y vapores orgánicos /ácidos","Filtro para respirador","Mascarilla desechable (N95)","Protector solar FPS 50","Protector facial","Mascara para soldar","Chaqueta de cuero","Coleto de cuero","Polera de Mangas largas","Pantalón de cuero","Guante de cabritilla corto y/o largo","Guantes soldador","Guantes de goma","Pantalon largo","Guantes multiflex","Guantes de alta temperatura","Buzo tipo piloto","Buzo de papel","Chaleco reflectante","Chaqueta impermeable (PVC)","Traje impermeable (PVC)","Traje resistente a altas temperaturas","Calzado de seguridad","Absorbedor de impacto","Tierra/Aserrín","Arnés de seguridad con 2 colas","Cubre calzado o botas","Polainas","Botas de goma con punta de acero","Línea de posicionamiento"],"equipos":["Equipos o herramientas manuales","Extensiones eléctricas/domiciliaria/industrial 220/380 volt","Inductor y horno","Torno y Fresadora","Equipos o herramientas eléctricas","Máquina soldar","Escaleras","Cabina de pintura","Equipos o herramientas neumáticas","Ventilador","Equipo de gammagrafía","Cabina de lavado","Equipos o herramientas hidráulicas","Tableros eléctricos","Esmeril Angular 7” y 41/2”","Grúa Horquilla","Eslingas, estrobos y cadenas","Equipos de iluminación Fijo","Taladro magnético/Dremel","Transpaleta","Tecles de cadena, palanca y tilfor","Equipos y/o herramientas de fuerza","Grupo generador","Esmeril y grata de Banco","Cancámos y grilletes","Iluminación portátil","Equipo Oxicorte y Calentador","Pistola de Impacto","Equipos y elementos de levante (Puentes)","Andamios y plataformas de trabajo","Prensas Hidráulicas","Sierra circular"],"p1":["¿ Requiere permiso autorización de jefatura para ejecución de la actividad?","¿ El grupo de trabajo esta autorizado y conoce el procedimiento o AST asociado a la tarea?","¿Se han verificados los equipos, elementos y herramientas adecuadas para la tarea?","¿ Se encuentra el equipo de protección personal disponible y adecuado para la tarea?"],"p2":["¿ Existe transito de vehículos o maquinarias en el sector?","¿ El área de trabajo se encuentra correctamente señalizada e identificada?","¿ El área de trabajo es segura : Limpia, iluminada, ventilada, plataformas o estructuras estables (cuando aplique)?","¿Es necesario realizar corte de energías (controlar/aislar) o bloquear?"],"p3":["¿ Los equipos asociados o a intervenir se encuentran de acuerdo a normas de seguridad?","¿ Se encuentran disponible los equipos de emergencia y vías de escape habilitados?","¿ Se encuentran coordinados los trabajos con otras áreas u empresas en el lugar?"]};
@@ -535,7 +563,7 @@ const CONFIG = {
   CLAVE_ADMIN : 'Nsgb1290',            // clave de respaldo opcional; la clave normal es la fecha DDMMAAAA
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '1.7',
+  VERSION : '1.9',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -1115,7 +1143,10 @@ function render(){
   const est=estadoReal(ast);
   $('#hz').className='hazard st-'+est;
   tema();
-  pintaQuien(); pintaModo(); pintaCola(); pintaNav(); pintaSalir(); pintaNube(); setTimeout(ajustaTope,0);
+  pintaQuien(); pintaModo(); pintaCola(); pintaNav(); pintaSalir(); pintaNube();
+  // mosaicos de áreas y de líneas: a pantalla completa
+  document.body.classList.toggle('ancha', !vista && (!AREA || (AREA && !LIN)));
+  setTimeout(ajustaTope,0);
   if(vista==='acceso'){ renderAcceso(); return; }
   if(!IDENT || vista==='ident'){ renderIdent(); return; }
   if(!AREA){
@@ -1198,7 +1229,7 @@ function renderIdent(){
   $('#app').innerHTML='<div class="card"><h2>Identificación</h2>'+
     '<p class="mini">Tus datos quedan guardados solo en este dispositivo. Toda AST que crees, edites o firmes quedará a tu nombre.</p>'+
     '<label>Nombre completo</label><input id="i_nom" autocomplete="name" value="'+esc(IDENT?IDENT.nombre:'')+'">'+
-    '<div class="row"><div><label>RUT</label><input id="i_rut" inputmode="numeric" placeholder="12.345.678-9" value="'+esc(IDENT?IDENT.rut:'')+'"></div>'+
+    '<div class="row"><div><label>RUT</label><input id="i_rut" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="12.345.678-K" oninput="rutInput(this)" value="'+esc(IDENT?IDENT.rut:'')+'"></div>'+
     '<div><label>Cargo</label><input id="i_car" placeholder="Mecánico" value="'+esc(IDENT?IDENT.cargo:'')+'"></div></div>'+
     '<label>Empresa</label><input id="i_emp" value="'+esc(IDENT&&IDENT.empresa?IDENT.empresa:CONFIG.EMPRESA)+'"></div>';
   const aPortada = !primera || W.identDesdePortada;
@@ -1391,7 +1422,7 @@ function renderAST(){
   const b=[];
   if(archivoAbierto){ barra([['Guardar PDF','',imprimir],['Descargar copia','sec',descargar],['Volver a AST guardadas','sec',volverArchivo]]); return; }
   if(est!=='vencida'&&est!=='anulada'&&est!=='archivada')
-    b.push([parts.length?'Registrarme':'Registrarme (sumarme a la AST)','',()=>{vista='registro';render();}]);
+    b.push(['Registrarme','',()=>{vista='registro';render();}]);
   if(est==='borrador') b.push(['Completar AST','sec',()=>{vista='crear';render();}]);
   if(est==='firmada') b.push(['Modificar AST','sec',modificarFirmada]);
   if(est==='pendiente') b.push(['Firmar como supervisor','ok',()=>{esSup=false;vista='firma';render();}]);
@@ -1721,7 +1752,7 @@ function renderRegistro(){
   if(est==='pendiente') h+='<div class="msg e"><b>AST en rojo.</b> Puedes registrarte, pero no inicies la actividad hasta que el supervisor firme.</div>';
   h+='<div class="card"><h2>Registro de participante</h2>'+
     '<label>Nombre completo</label><input id="p_nom" autocomplete="name" value="'+esc(IDENT.nombre)+'">'+
-    '<div class="row"><div><label>RUT</label><input id="p_rut" inputmode="text" autocapitalize="characters" placeholder="12.345.678-9" oninput="rutInput(this)" value="'+esc(IDENT.rut)+'"></div>'+
+    '<div class="row"><div><label>RUT</label><input id="p_rut" inputmode="text" autocapitalize="characters" placeholder="12.345.678-K" autocomplete="off" spellcheck="false" oninput="rutInput(this)" value="'+esc(IDENT.rut)+'"></div>'+
     '<div><label>Cargo</label><input id="p_car" value="'+esc(IDENT.cargo||'')+'"></div></div>'+
     '<label>Empresa</label><input id="p_emp" value="'+esc(IDENT.empresa||CONFIG.EMPRESA)+'">'+
     '<label>¿Cómo me siento hoy para trabajar?</label>'+
@@ -1758,9 +1789,10 @@ async function registrar(){
     firma:$('#pad').toDataURL('image/png'), hora:ahoraHM(), creado:new Date().toISOString()};
   try{
     await api('ast_participantes',{method:'POST',body:JSON.stringify(p)});
-    vista=''; await cargar(); render();
+    vista=''; await cargar();
     if(afecta==='Sí'||afecta==='No estoy seguro') avisar('Aviso al supervisor','Un participante declaró que su estado emocional podría afectar la tarea');
-    else toast('Registro correcto');
+    else toast('Quedaste registrado en la AST');
+    await ir(null);                       // vuelve al panel de áreas
   }catch(e){
     if(e.cola){ parts=parts.concat([p]); vista=''; render(); toast('Sin conexión: tu registro quedó en cola.'); }
     else toast('Error: '+e.message);
@@ -1830,8 +1862,10 @@ async function firmar(){
       sup_nombre:$('#s_nom').value.trim(),sup_obs:$('#s_obs').value.trim(),
       sup_firma:$('#pad').toDataURL('image/png'),sup_hora:ahoraHM(),
       actualizado:new Date().toISOString(), contenido:cont})});
-    esSup=false; vista=''; await cargar(); render();
-    avisar('AST autorizada','Firmada por '+(ast&&ast.sup_nombre?ast.sup_nombre:'supervisión'));
+    const quien=$('#s_nom').value.trim();
+    esSup=false; vista=''; await cargar();
+    avisar('AST autorizada','Firmada por '+(quien||'supervisión'));
+    await ir(null);                       // vuelve al panel de áreas
   }catch(e){
     if(e.cola){
       esSup=false; vista=''; render();
@@ -2106,10 +2140,48 @@ async function renderArchivo(){
   h+='</div>';
   $('#app').innerHTML=h;
   const bb=[['Actualizar','sec',renderArchivo],['Inicio','sec',()=>{vista='';render();}]];
-  if(data.length) bb.unshift(['PDF del período ('+data.length+')','',pdfPeriodo]);
+  if(data.length && esSupervision()){
+    bb.unshift(['Descargar todas ('+data.length+')','sec',descargarTodas]);
+    bb.unshift(['PDF del período ('+data.length+')','',pdfPeriodo]);
+  }
   barra(bb);
 }
 let ULTIMAS=[];
+/* Descarga en un solo archivo todas las AST filtradas, completas y para abrir sin conexión */
+async function descargarTodas(){
+  if(!esSupervision()) return toast('Solo supervisión, prevención y administración');
+  if(!ULTIMAS.length) return toast('No hay AST en el período');
+  toast('Preparando '+ULTIMAS.length+' AST…');
+  const css=document.querySelector('style').outerHTML;
+  let cuerpo='', n=0;
+  try{
+    for(const x of ULTIMAS){
+      let ps=[];
+      try{ ps=await api('ast_participantes?ast_id=eq.'+x.id+'&order=creado.asc'); }catch(e){}
+      cuerpo+=astImpresa(x,ps||[]); n++;
+    }
+  }catch(e){ return toast('Error: '+e.message); }
+  const desde=fmtFecha(fechaMenos(filtroDias)), hasta=fmtFecha(hoy());
+  const html='<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">'+
+    '<meta name="viewport" content="width=device-width, initial-scale=1">'+
+    '<title>AST '+esc(desde)+' a '+esc(hasta)+'</title>'+css+'</head><body><div class="wrap">'+
+    '<div class="card sec1"><h2>'+n+' AST · '+esc(CONFIG.EMPRESA)+' · '+esc(CONFIG.SUCURSAL)+'</h2><table>'+
+      fila('Período',desde+' al '+hasta)+
+      fila('Área',filtroArea?(AREAS[filtroArea]?AREAS[filtroArea].n:filtroArea):'Todas')+
+      fila('Descargado',fmtFecha(hoy())+' a las '+ahoraHM())+
+      fila('Descargado por',(IDENT&&IDENT.nombre)||'—')+'</table>'+
+      '<p class="mini" style="margin-top:8px">Archivo para consultar sin conexión. '+
+      'Ábrelo en el navegador y usa Imprimir → Guardar como PDF si necesitas el documento en papel.</p></div>'+
+    cuerpo+'</div></body></html>';
+  try{
+    const b=new Blob([html],{type:'text/html;charset=utf-8'});
+    const u=URL.createObjectURL(b), el=document.createElement('a');
+    el.href=u; el.download='AST_'+hoy()+'_'+n+'_registros.html';
+    document.body.appendChild(el); el.click();
+    setTimeout(function(){ URL.revokeObjectURL(u); try{document.body.removeChild(el);}catch(e){} },1500);
+    toast(n+' AST descargadas en un archivo');
+  }catch(e){ toast('No se pudo descargar: '+e.message); }
+}
 async function pdfPeriodo(){
   if(!ULTIMAS.length) return toast('No hay AST en el período');
   if(ULTIMAS.length>60) return toast('Demasiadas AST: acota el período o el área');
@@ -2127,24 +2199,101 @@ async function pdfPeriodo(){
   imprimirDoc(html,'AST_periodo');
 }
 function astImpresa(x,ps){
-  const cc=x.contenido||{}, e=estadoReal(x);
-  const nom=tituloGuardado(x);
-  let s='<div class="card"><h2>'+esc(nom)+'</h2><table>'+
-    fila('Fecha',fmtFecha(x.fecha))+fila('Vigencia',(x.hora_inicio||'')+' a '+(x.hora_fin||'')+' hrs')+
-    fila('Estado',ETIQ[e][0])+fila('Colaborador',x.responsable)+fila('Trabajo',cc.descripcion)+
-    fila('Lugar',cc.lugar)+fila('RAN / OT',x.ran)+fila('Supervisor',x.sup_nombre||cc.supTaller)+
-    fila('Participantes',(ps||[]).length)+'</table>';
-  (cc.etapas||[]).forEach(function(et){
-    s+='<div class="paso"><p><b>'+esc(et.etapa)+'</b></p>';
-    (et.riesgos||[]).forEach(r=>{ s+='<p><span class="k">Riesgo</span> '+esc(r[0])+'</p><p class="med"><span class="k c">Control</span> '+esc(r[1])+'</p>'; });
+  const c=x.contenido||{}, e=estadoReal(x), P=ps||[];
+  const D=DOCS[x.doc]||{titulo:c.docN||''};
+  const emo=(ANIMOS.find(z=>z[0]===c.animo)||['',''])[1];
+  let s='<div class="ast-doc">';
+
+  /* --- cabecera de la AST --- */
+  s+='<div class="doc-cab"><div class="doc-t">'+esc(tituloGuardado(x))+'</div>'+
+     '<div class="doc-s">'+esc(c.docN||D.titulo||'')+' · F-00461 Rev.A</div>'+
+     '<div class="doc-e st-'+e+'">'+ETIQ[e][0]+'</div></div>';
+
+  /* --- 1. antecedentes generales --- */
+  s+='<div class="card sec1"><h2>Antecedentes generales</h2><table>'+
+     fila('Formulario',c.docN||D.titulo)+
+     fila('Área',c.areaN||(AREAS[x.area]?AREAS[x.area].n:x.area))+
+     (c.lineaN?fila('Línea',c.lineaN):'')+
+     fila('Nombre colaborador',x.responsable)+
+     fila('Trabajo a realizar',c.descripcion)+
+     fila('Lugar específico',c.lugar)+
+     fila('Fecha inicio',c.fechaIni?fmtFecha(c.fechaIni):fmtFecha(x.fecha))+
+     fila('Fecha término',c.fechaFin?fmtFecha(c.fechaFin):fmtFecha(x.fecha))+
+     fila('Turno y vigencia',(x.turno||'')+' · '+(x.hora_inicio||'')+' a '+(x.hora_fin||'')+' hrs')+
+     fila('RAN / OT',x.ran)+fila('Equipo',x.equipo)+fila('Cliente',x.cliente)+
+     fila('Enviada a firma de',c.supTaller)+
+     '<tr><th>¿Cómo me siento hoy?</th><td>'+emo+' '+esc(c.animo||'—')+(c.animoOtro?': '+esc(c.animoOtro):'')+
+       '<br><span class="mini">¿Podría afectar la realización segura de las tareas?: <b>'+esc(c.afecta||'—')+'</b></span></td></tr>'+
+     (c.firmaColab?'<tr><th>Firma colaborador</th><td><img src="'+c.firmaColab+'" style="height:52px"></td></tr>':'')+
+     '</table></div>';
+
+  /* --- 2. pasos 1 a 3 --- */
+  s+='<div class="card sec1"><h2><span class="bdg">1</span>Paso 1 · Pensar</h2>'+listaSN(CAT.p1,c.p1)+'</div>';
+  s+='<div class="card sec2"><h2><span class="bdg">2</span>Paso 2 · Observar</h2>'+listaSN(CAT.p2,c.p2)+'</div>';
+  s+='<div class="card sec3"><h2><span class="bdg">3</span>Paso 3 · Chequear</h2>'+listaSN(CAT.p3,c.p3)+
+     (c.comentario?'<p style="margin-top:10px"><b>Comentario adicional:</b> '+esc(c.comentario)+'</p>':'')+'</div>';
+
+  /* --- 3. paso 4 --- */
+  s+='<div class="card sec4"><h2><span class="bdg">4</span>Paso 4 · Planificación</h2>'+
+     '<div class="sub-h">Elementos de protección personal</div><div class="pills">'+
+     ((c.epp||[]).map(z=>'<span class="pill on ro"><span class="bx"></span>'+esc(z)+'</span>').join('')||'<span class="mini">Sin registro</span>')+'</div>'+
+     '<div class="sub-h" style="margin-top:14px">Equipos, herramientas y maquinarias</div><div class="pills">'+
+     ((c.equipos||[]).map(z=>'<span class="pill on ro"><span class="bx"></span>'+esc(z)+'</span>').join('')||'<span class="mini">Sin registro</span>')+'</div>'+
+     '<table style="margin-top:12px">'+
+     fila('EPP en buenas condiciones',SN(c.eppOk))+
+     fila('Check list de herramientas al día',SN(c.herrOk))+'</table>'+
+     (c.observacion?'<p style="margin-top:8px"><b>Observación / condiciones:</b> '+esc(c.observacion)+'</p>':'')+'</div>';
+
+  /* --- 4. paso 5 --- */
+  const nR=(c.etapas||[]).reduce((t,z)=>t+(z.riesgos||[]).length,0);
+  s+='<div class="card sec5"><h2><span class="bdg">5</span>Paso 5 · Análisis seguro del trabajo '+
+     '<span class="cnt">'+(c.etapas||[]).length+' etapas · '+nR+' riesgos</span></h2>';
+  (c.etapas||[]).forEach(function(et,i){
+    s+='<div class="paso"><div class="n">ETAPA '+String(i+1).padStart(2,'0')+(et.grupo?' · GRUPO '+et.grupo:'')+'</div>'+
+       '<p><b>'+esc(et.etapa)+'</b></p>';
+    (et.riesgos||[]).forEach(function(r){
+      s+='<p><span class="k">Riesgo</span> '+esc(r[0])+'</p>'+
+         '<p class="med"><span class="k c">Control</span> '+esc(r[1])+'</p>';
+    });
     s+='</div>';
   });
-  if((ps||[]).length){
-    s+='<table style="margin-top:10px"><tr><th>Participante</th><th>RUT</th><th>Firma</th></tr>';
-    ps.forEach(p=>{ s+='<tr><td>'+esc(p.nombre)+'</td><td class="num">'+esc(p.rut||'')+'</td><td>'+(p.firma?'<img src="'+p.firma+'" style="height:26px">':'—')+'</td></tr>'; });
-    s+='</table>';
+  if(!(c.etapas||[]).length) s+='<p class="mini">Sin etapas registradas.</p>';
+  if(c.extra) s+='<p style="margin-top:10px"><b>Etapas adicionales:</b> '+esc(c.extra)+'</p>';
+  s+='</div>';
+
+  /* --- 5. participantes --- */
+  s+='<div class="card sec6"><h2><span class="bdg">6</span>Participantes <span class="cnt">'+P.length+' registrados</span></h2>'+
+     '<p class="mini">'+esc(DECLARACION)+'</p>';
+  if(!P.length) s+='<p class="mini" style="margin-top:10px">Sin participantes registrados. '+
+     'La AST queda cubierta por el colaborador que la creó y firmó.</p>';
+  else P.forEach(function(p,i){
+    s+='<div class="traza"><div class="t-a"><b>'+(i+1)+'. '+esc(p.nombre)+'</b>'+
+       (p.firma?' <img src="'+p.firma+'" style="height:26px;vertical-align:middle">':'')+'</div>'+
+       '<div class="mini"><span class="num">'+esc(p.rut||'')+'</span> · '+esc(p.cargo||'')+' · '+esc(p.empresa||'')+
+       ' · <span class="num">'+esc(p.hora||'')+'</span></div>'+
+       (p.animo?'<div class="mini">Estado: '+esc(p.animo)+' · ¿Afecta la tarea?: '+esc(p.afecta||'—')+'</div>':'')+'</div>';
+  });
+  s+='</div>';
+
+  /* --- 6. autorización --- */
+  s+='<div class="card sec7"><h2>Autorización de supervisión</h2><table>'+
+     fila('Estado',ETIQ[e][0])+
+     fila('Supervisor',x.sup_nombre||c.supTaller||'—')+
+     fila('Hora de firma',x.sup_hora||'—')+
+     (x.sup_obs?fila('Observaciones',x.sup_obs):'')+
+     (x.sup_firma?'<tr><th>Firma supervisor</th><td><img src="'+x.sup_firma+'" style="height:58px"></td></tr>'
+                 :'<tr><th>Firma supervisor</th><td class="mini">Sin firma de supervisión</td></tr>')+
+     '</table></div>';
+
+  /* --- 7. trazabilidad --- */
+  if((c.auditoria||[]).length){
+    s+='<div class="card sec6"><h2>Trazabilidad</h2>';
+    c.auditoria.slice().reverse().forEach(function(z){
+      s+='<div class="traza"><div class="t-a"><span class="num">'+esc(z.h||'')+'</span> · '+esc(z.a||'')+'</div>'+
+         '<div class="mini">'+esc(z.q||'')+(z.r?' · <span class="num">'+esc(z.r)+'</span>':'')+'</div></div>';
+    });
+    s+='</div>';
   }
-  if(x.sup_firma) s+='<p class="mini" style="margin-top:8px">Autorizada por '+esc(x.sup_nombre||'')+' a las '+esc(x.sup_hora||'')+'</p><img src="'+x.sup_firma+'" style="height:52px">';
   return s+'</div>';
 }
 async function borrarAST(id){
@@ -2467,7 +2616,8 @@ async function renderStats(){
     h+='</table></div>';
   }
   $('#app').innerHTML=h;
-  barra([['Reporte del período (PDF)','',reportePeriodo],
+  barra([['Reporte en PDF','',reportePeriodo],
+         ['Descargar reporte','sec',()=>reportePeriodo(true)],
          ['Actualizar','sec',renderStats],
          ['Inicio','sec',()=>{vista='';render();}]]);
 }
@@ -2483,7 +2633,7 @@ function verQR(){
   o.onclick=function(e){ if(e.target===o) o.remove(); };
   document.body.appendChild(o);
 }
-function reportePeriodo(){
+function reportePeriodo(descarga){
   const cont=$('#app'); if(!cont) return toast('No hay estadísticas que reportar');
   const clon=cont.cloneNode(true);
   // fuera los controles: el reporte es un documento, no una pantalla
@@ -2505,12 +2655,23 @@ function reportePeriodo(){
       fila('Período',desde+' al '+hasta)+
       fila('Emitido',fmtFecha(hoy())+' a las '+ahoraHM())+
       fila('Emitido por',(IDENT&&IDENT.nombre)||'—')+
-      fila('Sesión',esAdmin()?'Administrador':'Supervisión')+
+      fila('Sesión',esAdmin()?'Administrador':(SESION==='revisor'?'Prevención de Riesgos':'Supervisión'))+
     '</table></div>'+
     clon.innerHTML+
     '<div class="card"><p class="mini">Documento generado automáticamente desde AST Digital '+CONFIG.VERSION+'. '+
     'Las cifras corresponden a las AST registradas en el sistema dentro del período indicado.</p></div>'+
     '</div></body></html>';
+  if(descarga){
+    try{
+      const b=new Blob([html],{type:'text/html;charset=utf-8'});
+      const u=URL.createObjectURL(b), el=document.createElement('a');
+      el.href=u; el.download='Reporte_AST_'+hoy()+'.html';
+      document.body.appendChild(el); el.click();
+      setTimeout(function(){ URL.revokeObjectURL(u); try{document.body.removeChild(el);}catch(e){} },1500);
+      toast('Reporte descargado');
+    }catch(e){ toast('No se pudo descargar: '+e.message); }
+    return;
+  }
   imprimirDoc(html,'Reporte_AST_'+hoy());
 }
 
@@ -2985,7 +3146,7 @@ async function admInscripcion(){
   h+='</div>';
 
   if(libres.length){
-    h+='<div class="card sec2"><h2>¿Cómo te sientes hoy?</h2><div id="d_emo2" class="emos"></div>'+
+    h+='<div class="card sec2"><h2>¿Cómo te sientes hoy?</h2><div id="d_emo2" class="emo"></div>'+
        '<label>¿Podría afectar la tarea?</label><select id="i_afecta">'+
        AFECTA.map(o=>'<option>'+esc(o)+'</option>').join('')+'</select></div>';
     h+='<div class="card sec6"><h2>Declaración</h2><p class="mini">'+esc(DECLARACION)+'</p>'+
@@ -3006,8 +3167,8 @@ async function admInscripcion(){
 let INSC_ANIMO='';
 function pintaEmos2(){
   const el=$('#d_emo2'); if(!el) return;
-  el.innerHTML=ANIMOS.map(a=>'<span class="e'+(INSC_ANIMO===a[0]?' on':'')+'" onclick="INSC_ANIMO=\''+a[0]+'\';pintaEmos2()">'+
-    '<b>'+a[1]+'</b>'+esc(a[0])+'</span>').join('');
+  el.innerHTML=ANIMOS.map(a=>'<div class="e'+(INSC_ANIMO===a[0]?' on':'')+'" onclick="INSC_ANIMO=\''+a[0]+'\';pintaEmos2()">'+
+    '<i>'+a[1]+'</i>'+esc(a[0])+'</div>').join('');
 }
 function inscTodas(v){ INSC.data.forEach(x=>{ INSC.sel[x.id]=v; }); admInscripcion(); }
 async function inscribirVarias(){
@@ -3203,28 +3364,30 @@ let PENDS=0;
 function abrirMenu(v){ const l=$('#lateral'), o=$('#velo');
   if(v){ l.classList.add('open'); o.classList.add('on'); } else { l.classList.remove('open'); o.classList.remove('on'); } }
 function barra(items){
-  ACC=items||[];
+  ACC=(items||[]).filter(Boolean);
   pintaLateral();
-  const f=$('#fab');
-  const pri=(ACC[0]&&ACC[0][1]!=='sec')?ACC[0]:null;
-  if(pri){ f.style.display='block'; f.className='fab '+(pri[1]||''); f.textContent=pri[0]; f.onclick=pri[2]; }
-  else f.style.display='none';
-  const f2=$('#fab2');
-  if(f2){
-    // 1) guardar borrador  2) volver del formulario  3) salida al inicio
-    const guardar=ACC.find(x=>x&&/^guardar borrador/i.test(x[0]));
-    const volver =ACC.find(x=>x&&/^(volver|salir sin guardar)/i.test(x[0]));
-    const sec = guardar || volver;
-    if(sec && sec!==pri){
-      f2.style.display='block';
-      f2.textContent = guardar ? 'Guardar y salir' : '‹ Volver';
-      f2.onclick=sec[2];
-    } else if(AREA){
-      f2.style.display='block';
-      f2.textContent = lineasDe(AREA) && LIN ? '‹ Área' : '‹ Inicio';
-      f2.onclick = ()=>{ if(lineasDe(AREA) && LIN) ir(AREA); else ir(null); };
-    } else f2.style.display='none';
+  pintaDock();
+}
+function pintaDock(){
+  const d=$('#dock'); if(!d) return;
+  if(!ACC.length){ d.style.display='none'; d.innerHTML=''; return; }
+  const pri=[], sec=[];
+  ACC.forEach((it,i)=>{ (it[1]==='sec'?sec:pri).push([it,i]); });
+  const orden=pri.concat(sec);
+  let primero=true;
+  d.style.display='flex';
+  d.innerHTML=orden.map(function(par){
+    const it=par[0], i=par[1];
+    const esPri=(it[1]!=='sec');
+    let id='';
+    if(esPri && primero){ id=' id="fab"'; primero=false; }
+    return '<button class="d-b '+(it[1]==='sec'?'sec':(it[1]||'pri'))+'"'+id+
+           ' onclick="accion('+i+')">'+esc(it[0])+'</button>';
+  }).join('');
+  if(primero){                       // no había ninguna acción principal
+    const b=d.querySelector('.d-b'); if(b) b.id='fab';
   }
+  ajustaFondo();
 }
 let ACC=[];
 function navItem(txt,ic,activo,fn,tag){
@@ -3285,6 +3448,27 @@ async function salirForm(){
   }
   vista=''; render(); arriba();
 }
+/* Enter = acción principal. En cualquier campo de una línea dispara el botón
+   principal del dock; en un cuadro de confirmación, el botón de confirmar.      */
+document.addEventListener('keydown',function(ev){
+  if(ev.key!=='Enter' || ev.shiftKey || ev.altKey || ev.ctrlKey || ev.metaKey) return;
+  const dlg=document.querySelector('.ovl .dlg');
+  if(dlg){
+    const bs=dlg.querySelectorAll('button');
+    const b=bs[bs.length-1];              // el de confirmar siempre va al final
+    if(b){ ev.preventDefault(); b.click(); }
+    return;
+  }
+  // En el formulario de la AST y en los editores del administrador NO se envía con Enter:
+  // son pantallas largas y un Enter por descuido mandaría la AST a firma antes de tiempo.
+  if(vista==='crear' || /^adm-/.test(vista||'')) return;
+  const el=ev.target;
+  if(el && el.tagName==='TEXTAREA') return;                 // ahí Enter es salto de línea
+  if(el && el.tagName==='SELECT') return;
+  if(el && el.tagName==='INPUT' && /^(checkbox|radio|file)$/i.test(el.type)) return;
+  const f=document.querySelector('#dock .d-b:not(.sec)') || document.querySelector('#dock .d-b');
+  if(f){ ev.preventDefault(); if(el && el.blur) el.blur(); f.click(); }
+});
 function accion(i){ abrirMenu(false); const it=ACC[i]; if(it&&it[2]) it[2](); }
 function arriba(){ window.scrollTo(0,0);
   const hd=document.querySelector('header'), tp=document.querySelector('#top');
@@ -3304,7 +3488,11 @@ function irSesion(s){
   }
   destinoSesion=s; vista='acceso'; render(); arriba();
 }
-function ajustaFondo(){ document.body.style.paddingBottom='96px'; }
+function ajustaFondo(){
+  const d=$('#dock');
+  const alto=(d && d.style.display!=='none') ? d.offsetHeight : 0;
+  document.body.style.paddingBottom=(alto?alto+26:26)+'px';
+}
 function ajustaTope(){
   const t=document.querySelector('#top'), e=document.querySelector('#espacio');
   if(t&&e){ const alto=t.offsetHeight||150; if(e.style.height!==alto+'px') e.style.height=alto+'px'; }
