@@ -327,7 +327,9 @@ canvas.pad{width:100%;height:158px;border:1.5px dashed #A9B7C4;border-radius:11p
 .ovl{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,37,64,.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:120}
 .dlg{background:#fff;border-radius:14px;padding:17px;max-width:340px;width:100%;box-shadow:var(--sh)}
 .dlg p{margin:0 0 14px;font-size:15px}
-.dlg .par{display:flex;gap:8px}
+.dlg .par{display:flex;gap:8px;margin-top:14px}
+.dlg label{margin:0 0 5px}
+.dlg input{margin-bottom:2px}
 .dlg button{margin:0;flex:1}
 .toast{position:fixed;left:50%;bottom:130px;transform:translateX(-50%);background:var(--ink);color:#fff;
   padding:12px 17px;border-radius:99px;font-size:14px;z-index:99;box-shadow:var(--sh);max-width:88%;text-align:center}
@@ -563,7 +565,7 @@ const CONFIG = {
   CLAVE_ADMIN : 'Nsgb1290',            // clave de respaldo opcional; la clave normal es la fecha DDMMAAAA
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '1.9',
+  VERSION : '2.0',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -731,6 +733,22 @@ function pregunta(txt,okTxt,doble){
     else{ bs[0].onclick=function(){o.remove();res(false);};
           bs[1].onclick=function(){o.remove();res(true);}; }
     document.body.appendChild(o);
+  });
+}
+function preguntaTexto(txt,okTxt,etiqueta,tipo){
+  return new Promise(function(res){
+    const o=document.createElement('div'); o.className='ovl';
+    o.innerHTML='<div class="dlg"><p>'+esc(txt).replace(/\n/g,'<br>')+'</p>'+
+      (etiqueta?'<label>'+esc(etiqueta)+'</label>':'')+
+      '<input id="dlg_txt" type="'+(tipo==='password'?'password':'text')+'"'+
+      (tipo==='password'?' inputmode="numeric"':'')+'>'+
+      '<div class="par"><button class="sec">Cancelar</button>'+
+      '<button class="ok">'+esc(okTxt||'Confirmar')+'</button></div></div>';
+    const bs=o.querySelectorAll('button');
+    bs[0].onclick=function(){ o.remove(); res(null); };
+    bs[1].onclick=function(){ const v=o.querySelector('#dlg_txt').value; o.remove(); res(v); };
+    document.body.appendChild(o);
+    setTimeout(function(){ const i=o.querySelector('#dlg_txt'); if(i) i.focus(); },30);
   });
 }
 function avisar(titulo,cuerpo){
@@ -966,6 +984,194 @@ let IDENT=null;
 function cargarIdent(){ try{ IDENT=JSON.parse(localStorage.getItem('ast_ident')||'null'); }catch(e){ IDENT=null; }
   if(IDENT&&!IDENT.nombre) IDENT=null; }
 function guardarIdent(o){ IDENT=o; try{ localStorage.setItem('ast_ident',JSON.stringify(o)); }catch(e){ toast('No se pudo guardar en este equipo'); } }
+
+/* ---------- Firma guardada en el dispositivo ----------
+   Se guarda SOLO en este equipo (localStorage): no viaja a la nube ni a otro
+   teléfono. Solo se puede aplicar en sesiones con clave (supervisión,
+   prevención, administración) y cuando quien firma es su dueño.            */
+let FIRMA=null;            // {img, nombre, rut, f, h, origen}
+let FIRMA_USADA=false;     // se aplicó la firma guardada en el pad actual
+function cargarFirma(){
+  try{ FIRMA=JSON.parse(localStorage.getItem('ast_firma')||'null'); }catch(e){ FIRMA=null; }
+  if(FIRMA && !FIRMA.img) FIRMA=null;
+}
+function grabarFirma(o){
+  FIRMA=o;
+  try{ localStorage.setItem('ast_firma',JSON.stringify(o)); }
+  catch(e){ toast('No se pudo guardar la firma en este equipo'); }
+}
+function rutPlano(v){ return String(v||'').replace(/[^0-9kK]/g,'').toUpperCase(); }
+function puedeFirmaGuardada(){
+  if(!FIRMA || !IDENT) return false;
+  if(!esAdmin()) return false;                          // solo en la sesión de administrador
+  const a=rutPlano(FIRMA.rut), b=rutPlano(IDENT.rut);
+  if(a && b) return a===b;
+  return (FIRMA.nombre||'').trim().toLowerCase()===(IDENT.nombre||'').trim().toLowerCase();
+}
+function btnFirmaGuardada(){
+  if(!puedeFirmaGuardada()) return '';
+  return '<button class="sec sm" style="margin-top:8px;margin-left:8px" onclick="usarFirma()">Usar mi firma guardada</button>';
+}
+function nombreQueFirma(){
+  const el=$('#s_nom')||$('#p_nom')||$('#f_resp');
+  return el?String(el.value||'').trim():'';
+}
+function mismoNombre(a,b){
+  const n=x=>String(x||'').trim().toLowerCase().replace(/\s+/g,' ');
+  return n(a)===n(b);
+}
+async function usarFirma(){
+  if(!FIRMA) return toast('No tienes una firma guardada en este equipo');
+  if(!puedeFirmaGuardada()) return toast('La firma guardada es de '+(FIRMA.nombre||'otra persona'));
+  const cv=window._pad; if(!cv) return toast('No hay un recuadro de firma abierto');
+  const escrito=nombreQueFirma();
+  if(escrito && !mismoNombre(escrito,FIRMA.nombre))
+    return toast('La firma guardada es de '+FIRMA.nombre+'. Corrige el nombre o firma a mano.');
+  if(vista==='firma'){
+    const cl=await preguntaTexto(
+      'Vas a autorizar esta AST con tu firma guardada.\n\n'+
+      'Confirma con tu clave de administrador. Quedará anotado en la trazabilidad que se usó la firma guardada.',
+      'Aplicar mi firma','Clave de administrador','password');
+    if(cl===null) return;
+    const claveOk = CONFIG.CLAVE_ADMIN ? (cl===CONFIG.CLAVE_ADMIN) : pinValido(cl);
+    if(!claveOk) return toast('Clave de administrador incorrecta');
+  }else{
+    const ok=await pregunta('Vas a usar tu firma guardada.\n\n'+
+      'Hazlo solo si de verdad revisaste esta AST y participas en el trabajo.','Usar mi firma');
+    if(!ok) return;
+  }
+  pegarEnPad(cv,FIRMA.img);
+}
+function pegarEnPad(cv,src){
+  const im=new Image();
+  im.onload=function(){
+    const x=cv.getContext('2d'), d=window.devicePixelRatio||1;
+    const W=cv.width/d, H=cv.height/d;
+    x.clearRect(0,0,W,H);
+    const r=Math.min((W*0.84)/im.width,(H*0.84)/im.height);
+    const w=im.width*r, h=im.height*r;
+    x.drawImage(im,(W-w)/2,(H-h)/2,w,h);
+    padVacio=false; FIRMA_USADA=true;
+    toast('Firma aplicada');
+  };
+  im.onerror=function(){ toast('No se pudo aplicar la firma'); };
+  im.src=src;
+}
+/* Limpia la foto de una firma en papel: quita el fondo claro, recorta el
+   trazo y devuelve un PNG con fondo transparente.                          */
+function limpiaFirmaImg(img){
+  let w=img.naturalWidth||img.width, hh=img.naturalHeight||img.height;
+  if(!w||!hh) return null;
+  if(w>1000){ hh=Math.round(hh*1000/w); w=1000; }
+  const c=document.createElement('canvas'); c.width=w; c.height=hh;
+  const x=c.getContext('2d');
+  x.drawImage(img,0,0,w,hh);
+  let d;
+  try{ d=x.getImageData(0,0,w,hh); }catch(e){ return null; }
+  const p=d.data;
+  let minX=w, minY=hh, maxX=0, maxY=0, hay=false;
+  for(let i=0;i<p.length;i+=4){
+    const lum=p[i]*0.299+p[i+1]*0.587+p[i+2]*0.114;
+    if(lum>190){ p[i+3]=0; continue; }
+    const t=Math.min(1,(190-lum)/110);
+    p[i]=16; p[i+1]=32; p[i+2]=46; p[i+3]=Math.round(255*t);
+    if(p[i+3]>45){
+      hay=true;
+      const q=i/4, px=q%w, py=(q-px)/w;
+      if(px<minX)minX=px; if(px>maxX)maxX=px;
+      if(py<minY)minY=py; if(py>maxY)maxY=py;
+    }
+  }
+  if(!hay) return null;
+  x.putImageData(d,0,0);
+  const m=8;
+  minX=Math.max(0,minX-m); minY=Math.max(0,minY-m);
+  maxX=Math.min(w-1,maxX+m); maxY=Math.min(hh-1,maxY+m);
+  const cw=maxX-minX+1, ch=maxY-minY+1;
+  const k=Math.min(1,640/cw);
+  const c2=document.createElement('canvas');
+  c2.width=Math.max(1,Math.round(cw*k)); c2.height=Math.max(1,Math.round(ch*k));
+  c2.getContext('2d').drawImage(c,minX,minY,cw,ch,0,0,c2.width,c2.height);
+  return c2.toDataURL('image/png');
+}
+let FIRMA_IMPORT='';
+function importarFirma(el){
+  const f=el&&el.files&&el.files[0]; if(!f) return;
+  if(f.size>8*1024*1024) return toast('La imagen es muy pesada (máximo 8 MB)');
+  const fr=new FileReader();
+  fr.onload=function(){
+    const im=new Image();
+    im.onload=function(){
+      const png=limpiaFirmaImg(im);
+      if(!png) return toast('No se distingue el trazo. Usa una foto con buena luz y fondo blanco.');
+      FIRMA_IMPORT=png;
+      const pv=$('#d_prev');
+      if(pv) pv.innerHTML='<p class="mini" style="margin:12px 0 6px">Así quedará tu firma:</p>'+
+        '<div class="firma-ok"><img src="'+png+'" style="height:80px"></div>';
+      toast('Imagen lista. Ahora guárdala.');
+    };
+    im.onerror=function(){ toast('No se pudo leer la imagen'); };
+    im.src=fr.result;
+  };
+  fr.onerror=function(){ toast('No se pudo leer el archivo'); };
+  fr.readAsDataURL(f);
+}
+function renderMiFirma(){
+  $('#titulo').textContent='Mi firma guardada';
+  $('#meta').textContent='Administración · solo en este dispositivo';
+  FIRMA_IMPORT='';
+  let h='<div class="msg i"><b>Para qué sirve.</b> Guardas tu firma una vez y la aplicas con un botón cada vez '+
+        'que te toque firmar, en vez de dibujarla de nuevo.</div>';
+  h+='<div class="msg e"><b>Condiciones de uso.</b> La firma se guarda solo en este equipo: no se sube a la nube '+
+     'ni pasa a otro teléfono. El botón solo aparece en la sesión de administrador — en taller, supervisión y '+
+     'prevención no existe — y solo cuando el nombre que firma es el tuyo. Para autorizar una AST se pide la clave '+
+     'de administrador y queda anotado en la trazabilidad que se usó la firma guardada. Firmar sigue significando '+
+     'que revisaste la AST.</div>';
+  if(FIRMA){
+    h+='<div class="card sec7"><h2>Firma actual</h2>'+
+       '<div class="firma-ok"><img src="'+FIRMA.img+'" style="height:84px"></div>'+
+       '<table style="margin-top:11px">'+fila('A nombre de',FIRMA.nombre)+fila('RUT',FIRMA.rut)+
+       fila('Guardada el',fmtFecha(FIRMA.f)+' '+(FIRMA.h||''))+
+       fila('Origen',FIRMA.origen==='foto'?'Foto de firma en papel':'Trazada en pantalla')+'</table>'+
+       '<button class="dan sm" style="margin-top:13px" onclick="quitarFirma()">Eliminar la firma de este equipo</button></div>';
+  }else{
+    h+='<div class="msg i">Todavía no hay una firma guardada en este equipo.</div>';
+  }
+  h+='<div class="card sec6"><h2>'+(FIRMA?'Reemplazar la firma':'Guardar mi firma')+'</h2>'+
+     '<p class="mini">Fírmala aquí abajo con el dedo o el mouse, o sube una foto de tu firma en papel '+
+     '(hoja blanca, lápiz oscuro, buena luz): se recorta y se le quita el fondo automáticamente.</p>'+
+     '<canvas class="pad" id="pad"></canvas>'+
+     '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar lo trazado</button>'+
+     '<label style="margin-top:15px">Subir una foto de mi firma</label>'+
+     '<input type="file" id="f_img" accept="image/*" onchange="importarFirma(this)">'+
+     '<div id="d_prev"></div>'+
+     '<p class="mini" style="margin-top:12px">Quedará a nombre de <b>'+esc(IDENT?IDENT.nombre:'')+'</b> · '+
+     esc(IDENT?IDENT.rut:'')+'</p></div>';
+  $('#app').innerHTML=h;
+  iniciarPad($('#pad'));
+  barra([['Guardar mi firma','',guardarMiFirma],['Inicio','sec',()=>{vista='';render();}]]);
+}
+async function guardarMiFirma(){
+  if(!IDENT) return toast('Primero identifícate');
+  const img = FIRMA_IMPORT || (padVacio ? '' : $('#pad').toDataURL('image/png'));
+  if(!img) return toast('Traza tu firma o sube una foto');
+  const ok=await pregunta('Tu firma quedará guardada en este equipo a nombre de '+IDENT.nombre+'.\n\n'+
+    'Cuida el acceso a este dispositivo: quien lo use con tu sesión podría aplicarla.','Guardar mi firma');
+  if(!ok) return;
+  grabarFirma({img:img, nombre:IDENT.nombre, rut:IDENT.rut, f:hoy(), h:ahoraHM(),
+               origen:FIRMA_IMPORT?'foto':'trazo'});
+  logCFG('Guardó su firma en un dispositivo', IDENT.nombre+' · '+IDENT.rut);
+  try{ await guardarCFG(); }catch(e){}
+  toast('Firma guardada');
+  renderMiFirma();
+}
+async function quitarFirma(){
+  const ok=await pregunta('¿Eliminar tu firma guardada de este equipo?','Eliminar');
+  if(!ok) return;
+  FIRMA=null; try{ localStorage.removeItem('ast_firma'); }catch(e){}
+  toast('Firma eliminada de este equipo');
+  renderMiFirma();
+}
 function pintaSalir(){
   const b=$('#salir'); if(!b) return;
   b.onclick=async function(){
@@ -1060,7 +1266,7 @@ async function cargar(){
   } else avisoArchivo=null;
   parts = ast ? await api('ast_participantes?ast_id=eq.'+ast.id+'&order=creado.asc') : [];
 }
-const VISTAS_FORM=['ident','crear','registro','firma','acceso',
+const VISTAS_FORM=['ident','crear','registro','firma','acceso','mifirma',
   'adm-areas','adm-area','adm-doc','adm-bloques','adm-cat','adm-preg','adm-sup','adm-gen','adm-log'];
 function puedeRefrescar(){
   if(!IDENT) return false;                       // pantalla de identificación
@@ -1150,7 +1356,8 @@ function render(){
   if(vista==='acceso'){ renderAcceso(); return; }
   if(!IDENT || vista==='ident'){ renderIdent(); return; }
   if(!AREA){
-    if(vista.indexOf('adm-')===0 && !esAdmin()){ vista='acceso'; renderAcceso(); return; }
+    if((vista.indexOf('adm-')===0 || vista==='mifirma') && !esAdmin()){ vista='acceso'; renderAcceso(); return; }
+    if(vista==='mifirma'){ renderMiFirma(); return; }
     if(vista==='adm-areas'){ admAreas(); return; }
     if(vista==='adm-area'){ admArea(); return; }
     if(vista==='adm-doc'){ admDoc(); return; }
@@ -1496,7 +1703,7 @@ function renderForm(){
   h+='<div class="card sec7"><h2>Firma del colaborador</h2>'+
     (W.firmaColab?'<div class="firma-ok"><img src="'+W.firmaColab+'" style="height:56px"><p class="mini" style="margin:6px 0 0">Firma registrada. Vuelve a firmar abajo solo si necesitas reemplazarla.</p></div>':'')+
     '<canvas class="pad" id="pad" style="margin-top:10px"></canvas>'+
-    '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button></div>';
+    '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button>'+btnFirmaGuardada()+'</div>';
 
   h+='<div class="card sec1"><h2><span class="bdg">1</span>Paso 1 · Pensar'+edLink('adm-preg')+'</h2><div id="q1"></div></div>';
   h+='<div class="card sec2"><h2><span class="bdg">2</span>Paso 2 · Observar</h2><div id="q2"></div></div>';
@@ -1764,7 +1971,7 @@ function renderRegistro(){
       AFECTA.map(a=>'<option>'+a+'</option>').join('')+'</select>'+
     '<div class="chk" style="margin-top:12px"><input type="checkbox" id="p_dec"><span>'+esc(DECLARACION)+'</span></div>'+
     '<label>Firma</label><canvas class="pad" id="pad"></canvas>'+
-    '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button></div>';
+    '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button>'+btnFirmaGuardada()+'</div>';
   $('#app').innerHTML=h; iniciarPad($('#pad'));
   barra([['Registrarme','',registrar],['Volver','sec',salirForm]]);
 }
@@ -1834,7 +2041,7 @@ function renderFirma(){
   h+='<div class="card sec7"><h2>Autorización</h2><label>Nombre del supervisor</label><input id="s_nom" value="'+esc(ast.sup_nombre||IDENT.nombre)+'">'+
      '<label>Observaciones de la firma (opcional)</label><textarea id="s_obs"></textarea>'+
      '<label>Firma</label><canvas class="pad" id="pad"></canvas>'+
-     '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button>'+
+     '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button>'+btnFirmaGuardada()+
      '<button class="ok" style="margin-top:16px" onclick="firmar()">Firmar y autorizar la AST</button>'+
      '<button class="dan" style="margin-top:10px" onclick="devolver()">Devolver a corrección</button></div>';
   $('#app').innerHTML=h;
@@ -1856,7 +2063,7 @@ async function firmar(){
   if(!document.querySelector('#s_nom')) return;
   if(!V('#s_nom').trim()) return toast('Falta el nombre del supervisor');
   if(padVacio) return toast('Falta la firma');
-  const cont=conTraza('Firmó y autorizó');
+  const cont=conTraza('Firmó y autorizó'+(FIRMA_USADA?' aplicando su firma guardada en el dispositivo':''));
   try{
     await api('ast_registros?id=eq.'+ast.id,{method:'PATCH',body:JSON.stringify({estado:'firmada',
       sup_nombre:$('#s_nom').value.trim(),sup_obs:$('#s_obs').value.trim(),
@@ -3152,7 +3359,7 @@ async function admInscripcion(){
     h+='<div class="card sec6"><h2>Declaración</h2><p class="mini">'+esc(DECLARACION)+'</p>'+
        '<div class="chk" style="margin-top:10px"><input type="checkbox" id="i_dec"><span>Declaro lo anterior para cada AST que marqué</span></div>'+
        '<label style="margin-top:12px">Tu firma</label><canvas class="pad" id="pad"></canvas>'+
-       '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button></div>';
+       '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button>'+btnFirmaGuardada()+'</div>';
   }
   $('#app').innerHTML=h;
   if(libres.length){
@@ -3426,6 +3633,7 @@ function pintaLateral(){
     h+=navItem('Ajustes generales','⚒', vista==='adm-gen', "menuVista('adm-gen')");
     h+=navItem('Registro de cambios','\u2637', vista==='adm-log', "menuVista('adm-log')");
     h+=navItem('Inscribirme en varias AST','\u270D', vista==='adm-insc', "menuVista('adm-insc')");
+    h+=navItem('Mi firma guardada','\u270F', vista==='mifirma', "menuVista('mifirma')", FIRMA?'✓':'');
   }
   h+='<div class="lat-sec">Sesiones</div>';
   h+=navItem('Sesión taller','\uD83E\uDDBA', SESION==='general', "irSesion('general')");
@@ -3524,7 +3732,7 @@ function iniciarPad(cv){
   const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1;
   cv.width=r.width*d; cv.height=r.height*d;
   const x=cv.getContext('2d'); x.scale(d,d); x.lineWidth=2.2; x.lineCap='round'; x.strokeStyle='#10202E';
-  padVacio=true; let dib=false;
+  padVacio=true; FIRMA_USADA=false; let dib=false;
   const pos=e=>{const b=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return[t.clientX-b.left,t.clientY-b.top];};
   const ini=e=>{e.preventDefault();dib=true;padVacio=false;const p=pos(e);x.beginPath();x.moveTo(p[0],p[1]);};
   const mov=e=>{if(!dib)return;e.preventDefault();const p=pos(e);x.lineTo(p[0],p[1]);x.stroke();};
@@ -3590,6 +3798,7 @@ function cambiarDesdePortada(){
 (async function(){
   $('#brand').textContent=CONFIG.EMPRESA+' · '+CONFIG.SUCURSAL;
   cargarIdent();
+  cargarFirma();
   cargarCola(); pintaCola();
   leerURL();
   iniciarPortada();
