@@ -1,0 +1,72 @@
+OK   Portada sin «Sumitomo Drive» suelto
+OK   Inicio sin la tarjeta grande de bienvenida
+OK   Dos tarjetas compactas: INGRESA A TALLER SMAN y FIRMAS PENDIENTES
+OK   Las tarjetas tienen ícono
+OK   FIRMAS PENDIENTES muestra la cantidad (0)
+OK   Tarjetas compactas (alto < 110 px)
+OK   Áreas: 11 cuadros
+OK   Áreas: sin «Resumen del área»
+OK   Áreas: ningún botón tapa los cuadros
+OK   Áreas: sin desplazamiento horizontal
+OK   Áreas: botón Volver visible
+OK   Formulario nuevo: todos los cuadros cerrados (9 cuadros)
+OK   Cada cuadro tiene su flecha visible de 30 px o más
+OK   Un clic abre el cuadro
+OK   La flecha queda girada y se avisa abierto (aria-expanded)
+OK   Un clic en la flecha lo cierra
+OK   Solo un cuadro abierto a la vez (abrió Paso 2, se cerró Paso 1)
+OK   El campo que se escribe no queda detrás de los botones
+OK   «Se envía a firma de»: nombres de la base + Otros (Alexis Núñez, Luis Cortés, Bryan Mendoza, Richard Williams, Maybeth Prado, Francisco Yáñez, Bernardo Pérez, Jazmin Villarroel, Otros)
+OK   «Otros» abre un campo de texto para escribir el nombre
+OK   Al elegir un nombre de la lista se oculta el campo de texto
+OK   Abrir otros pasos no borra la firma
+OK   Barra de botones abajo, sin «Volver» encima del formulario
+OK   Formulario sin desplazamiento horizontal
+OK   AST enviada a firma
+OK   AST enviada a «Otros»: nombre escrito, sin cuenta asociada (Juan Externo Contratista)
+Errores JS taller: []
+OK   Login: la contraseña tiene el ojo para mostrar/ocultar
+OK   El ojo muestra la contraseña
+OK   El ojo la vuelve a ocultar
+OK   Login: enlace de acceso de emergencia
+OK   Supervisor entra y cambia la clave temporal (con ojo en los 3 campos)
+OK   Inicio con sesión: sin tarjeta grande, con tarjetas compactas y buscador
+OK   Firma del supervisor guardada (Bryan Mendoza 00:22)
+OK   Ver AST: cuadros cerrados al abrir (9)
+OK   Ver AST: acordeón exclusivo
+OK   Número correlativo asignado al firmar (5)
+OK   AST de «Otros» la firma un responsable autorizado y queda su nombre real (Bryan Mendoza, N° 6)
+OK   El taller ve la AST firmada con su número
+OK   Botón «Agregar participante» en la AST firmada
+OK   Aparece la declaración exacta
+OK   Sin aceptar la declaración no deja registrar
+OK   Participante agregado a la misma AST, marcado después de la firma
+OK   Queda fecha, hora y quién lo registró (Juan Pérez)
+OK   Se conserva el número correlativo
+OK   No se alteran las firmas previas
+OK   No se creó una AST nueva (1)
+OK   La lista de participantes lo muestra como incorporado después de la firma
+Errores JS taller 2: []
+OK   Sin errores JS (taller)
+OK   Administración de usuarios
+OK   Barra de usuarios: Nuevo usuario y Clave de emergencia
+OK   Crear usuario: la contraseña temporal tiene ojo
+OK   Crea un usuario
+OK   Usuario deshabilitado desaparece de «Se envía a firma de»
+OK   Su firma histórica se conserva en la AST
+OK   En el teléfono del taller, la lista ya no muestra al deshabilitado (10 opciones)
+OK   Historial: participante agregado después de la firma
+Errores JS sup/adm: [] []
+OK   Sin errores JS (supervisor y administrador)
+OK   Pantalla de emergencia: clave y contraseñas con ojo
+OK   La clave no está en el código de la app
+OK   Clave equivocada: rechazada y sigue sin sesión
+OK   Clave correcta: entra como administrador con su contraseña nueva
+Errores JS emergencia: []
+OK   Sin errores JS (emergencia)
+OK   pc: áreas sin desplazamiento horizontal, sin botones encima y sin scroll vertical
+OK   notebook: áreas sin desplazamiento horizontal, sin botones encima y sin scroll vertical
+OK   tablet: áreas sin desplazamiento horizontal, sin botones encima y sin scroll vertical
+OK   monitor: áreas sin desplazamiento horizontal, sin botones encima y sin scroll vertical
+
+66/66 correctas []
