@@ -1149,6 +1149,56 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .prog{height:10px;border-radius:6px;background:#E8EEF5;overflow:hidden;margin:6px 0}
 .prog i{display:block;height:100%;background:linear-gradient(90deg,#0B4EA2,#3B8FF3);transition:width .2s}
 .cfg-t.cfg-dest{border-color:#8DB7E6;background:linear-gradient(135deg,#F2F7FD,#fff)}
+
+/* ===================== AST DIGITAL 3.5 ===================== */
+/* Paneles informativos: se leen, no se tocan (sin borde de botón, sin cambio al pasar el mouse) */
+.wi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(190px,auto);gap:14px;margin-top:14px}
+.wi-2{grid-column:span 2}
+.wi-full{grid-column:1/-1;margin:0}
+.wi{position:relative;padding:14px 16px 16px;border-radius:16px;cursor:default;min-width:0;
+  background:linear-gradient(160deg,rgba(20,52,92,.72),rgba(9,30,56,.72));border:1px solid rgba(158,195,232,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px rgba(3,12,24,.35);backdrop-filter:blur(6px)}
+.wi::after{content:"";position:absolute;left:16px;right:16px;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,#3B8FF3,transparent)}
+.wi .wi-h{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.wi .wi-h svg{width:17px;height:17px;color:#7FC3FF;flex:none}
+.wi .wi-h h3{margin:0;font:700 12px/1.2 var(--f-disp,inherit);letter-spacing:.1em;text-transform:uppercase;color:#CFE1F1}
+.wi .wi-h span{margin-left:auto;font-size:11.5px;color:#8FB0D0}
+.wd-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px}
+.wd{display:flex;flex-direction:column;gap:3px;padding-left:10px;border-left:3px solid rgba(158,195,232,.35)}
+.wd b{font:800 24px/1.05 var(--f-disp,inherit);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wd span{font-size:12px;color:#A9C6E2;line-height:1.25}
+.wd.v{border-left-color:#4CC37A}.wd.v b{color:#7BD69B}
+.wd.r{border-left-color:#F06A6A}.wd.r b{color:#FF9C9C}
+.wd.a{border-left-color:#F0B43C}.wd.a b{color:#FFD27A}
+.wd.g{border-left-color:#8A97A4}
+.wl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.wl li{display:grid;grid-template-columns:auto 1fr;column-gap:10px;row-gap:1px;font-size:12.5px;color:#CFE1F1;padding-bottom:8px;border-bottom:1px solid rgba(158,195,232,.1)}
+.wl li:last-child{border-bottom:0;padding-bottom:0}
+.wl li b{grid-row:span 2;font:800 12px/1.3 var(--f-disp,inherit);color:#7FC3FF;letter-spacing:.03em}
+.wl li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl li small{color:#8FB0D0;font-size:11.5px}
+.wl.wl-ok li{grid-template-columns:1fr}
+.wl.wl-ok li span{white-space:normal}
+.wl.wl-ok li::before{content:"";display:none}
+.wi-vacio{color:#8FB0D0!important}
+.op-grid+.wi-grid{margin-top:14px}
+@media (max-width:1000px){ .wi-grid{grid-template-columns:repeat(2,minmax(0,1fr))} .wi-2{grid-column:span 2} }
+@media (max-width:620px){ .wi-grid{grid-template-columns:1fr;grid-auto-rows:auto} .wi-2{grid-column:auto} }
+.wl-ev li b{font-variant-numeric:tabular-nums;color:#9EC3E8}
+.wl-ar li b{font-size:18px;color:#fff;min-width:26px;text-align:right}
+
+/* Portada: temas como información, no como botones */
+#portada .cover-temas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;max-width:640px;margin:16px auto 6px;position:relative;z-index:1;
+  border-top:1px solid rgba(158,195,232,.18);border-bottom:1px solid rgba(158,195,232,.18)}
+#portada .cover-temas .ct{display:flex;align-items:flex-start;gap:9px;padding:12px 12px;text-align:left;cursor:default}
+#portada .cover-temas .ct+.ct{border-left:1px solid rgba(158,195,232,.14)}
+#portada .cover-temas svg{width:18px;height:18px;color:#7FC3FF;flex:none;margin-top:1px}
+#portada .cover-temas b{display:block;font-size:12.5px;color:#E6F0FA;font-weight:700;letter-spacing:.01em}
+#portada .cover-temas span{display:block;font-size:11px;color:#8FB0D0;line-height:1.3;margin-top:2px}
+@media (max-width:560px){ #portada .cover-temas{grid-template-columns:1fr;max-width:300px} #portada .cover-temas .ct+.ct{border-left:0;border-top:1px solid rgba(158,195,232,.14)} }
+
+/* Fondo de las pantallas internas: el mismo tema, más tenue detrás del contenido */
+body::before{background-size:auto,auto,420px 420px,auto!important}
 </style>
 
 </head>
@@ -1199,7 +1249,7 @@ const CONFIG = {
   SB_KEY : 'sb_publishable_WOTPiecKx5ai4F6feLbexQ_doYTScvd',
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '3.4',
+  VERSION : '3.5',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -2609,11 +2659,12 @@ async function guardar(estado){
     }
   }
   if(estado==='pendiente') delete cont.devolucion;
+  cont.inicioLlenado=((ast&&ast.contenido)||{}).inicioLlenado||W.tIniForm||new Date().toISOString();
   body.contenido=conTraza(
     !ast ? (estado==='pendiente'?'Creó y envió a firma':'Creó la AST')
          : (estado==='pendiente'?'Envió a firma':'Guardó cambios'), cont);
   if(estado==='pendiente'){
-    const ini = ast ? inicioLlenado(ast) : null;
+    const ini = cont.inicioLlenado || (ast ? inicioLlenado(ast) : null);
     body.contenido.tLlenado = ini ? minutosEntre(ini,new Date().toISOString()) : 0;
   }
   const nuevo = !ast; const kb=claveBorr();
@@ -2621,7 +2672,7 @@ async function guardar(estado){
   try{
     if(ast) await api('ast_registros?id=eq.'+ast.id,{method:'PATCH',body:JSON.stringify(body)});
     else    await api('ast_registros',{method:'POST',body:JSON.stringify(body)});
-    borrarBorradorLocal(kb);
+    borrarBorradorLocal(kb); W.tIniForm=null;
     vista=''; await cargar(); render();
     if(estado==='pendiente') registrarActividad('Envió una AST a firma',tituloAL(AREA,LIN)+' · firma: '+(cont.supTaller||'—'));
     toast(estado==='pendiente'?'AST enviada a firma de '+(cont.supTaller||'supervisión'):'Borrador guardado');
@@ -7399,6 +7450,7 @@ function restaurarBorradorLocal(){
 }
 
 function renderForm(){
+  if(!W.tIniForm || W.tIniAst!==(ast?ast.id:'nueva')){ W.tIniForm=new Date().toISOString(); W.tIniAst=(ast?ast.id:'nueva'); }
   const D=documento(AREA,LIN), c=(ast&&ast.contenido)||{};
   plReset('f-'+(ast?ast.id:'nueva'));
   W.p1=(c.p1||CAT.p1.map(()=>null)).slice(); W.p2=(c.p2||CAT.p2.map(()=>null)).slice(); W.p3=(c.p3||CAT.p3.map(()=>null)).slice();
@@ -8261,7 +8313,7 @@ async function api(path,opt){
   const ms=Date.now()-t0;
   if(!r.ok){
     const t=await r.text(); diag(m,path,ms,r.status,false);
-    if(r.status>=500 || r.status===402){
+    if(r.status>=502 || r.status===402){
       const msg=falloHttp(r.status,t); ponerEstado('err',msg);
       if(lectura){ const c=await cacheLeer(path); if(c){ avisoCache(c.ts); return c.d; } }
       const er=new Error(msg); er.status=r.status; throw er;
@@ -8291,7 +8343,7 @@ async function apiDirecta(path,opt){
   finCarga(); diag('RPC',path,Date.now()-t0,r.status,r.ok);
   if(!r.ok){
     const t=await r.text();
-    if(r.status>=500 || r.status===402){ const msg=falloHttp(r.status,t); ponerEstado('err',msg); const er=new Error(msg); er.status=r.status; throw er; }
+    if(r.status>=502 || r.status===402){ const msg=falloHttp(r.status,t); ponerEstado('err',msg); const er=new Error(msg); er.status=r.status; throw er; }
     if(NUBE_EST!=='ok') ponerEstado('ok','');
     const er=new Error(errorLegible(r.status,t)); er.status=r.status; throw er;
   }
@@ -9069,7 +9121,7 @@ async function renderStats(){
   if(D4C.key!==key || !NUBE){
     if(D4C.key!==key) $('#app').innerHTML='<p class="mini">Calculando…</p>';
     AVISO_CACHE=null;
-    try{ D4C={key:key,data:await traerLigero('ast_registros?fecha=gte.'+desde+'&fecha=lte.'+r[1]+'&order=fecha.desc')}; aviso=AVISO_CACHE; }
+    try{ D4C={key:key,data:await traerLigero('ast_registros?fecha=gte.'+desde+'&fecha=lte.'+r[1]+'&order=fecha.desc',SEL_D5)}; aviso=AVISO_CACHE; }
     catch(e){
       if(D4C.key===key){ aviso={ts:Date.now(),mem:true}; }
       else { $('#app').innerHTML='<div class="msg e">No se pudieron calcular los indicadores.<br><span class="mini">'+esc(e.message)+'</span></div>';
@@ -9090,7 +9142,7 @@ function pintaD4(){
   const cumpl=(n-rec)>0?Math.round(fir*100/(n-rec)):null;
   const lun=lunesDe(hoy());
   let S=todos.filter(x=>x.fecha>=lun); if(D4.area) S=S.filter(x=>x.area===D4.area); if(D4.sup) S=S.filter(x=>((x.contenido||{}).supTaller||'').trim()===D4.sup);
-  const tA=prom(F.map(minutosAprobacion)), tC=prom(F.map(minCorreccion)), tZ=prom(F.map(minCiclo));
+  const tA=prom(F.map(minFirmar)), tC=prom(F.map(minCorreccion)), tZ=prom(F.map(minHacer));
   const areasL=Array.from(new Set(todos.map(x=>x.area))).filter(Boolean).sort((a,b)=>nomArea(a).localeCompare(nomArea(b)));
   const supsL=Array.from(new Set(todos.map(x=>((x.contenido||{}).supTaller||'').trim()).filter(Boolean))).sort();
   const sel=(id,v,ops,fn)=>'<select id="'+id+'" onchange="'+fn+'">'+ops.map(o=>'<option value="'+esc(o[0])+'"'+(v===o[0]?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select>';
@@ -9112,9 +9164,9 @@ function pintaD4(){
   h+='<div class="d4-par"><div class="d4-c"><h3>'+ic('clock')+' Esta semana <span>desde el '+esc(fmtFecha(lun))+'</span></h3><div class="d4-kpis k4">'+
      K(S.length,'Emitidas')+K(S.filter(esFirm).length,'Firmadas','','k-verde')+K(S.filter(esAnul).length,'Rechazadas','','k-gris')+K(S.filter(esPend).length,'Pendientes','','k-rojo')+'</div></div>'+
      '<div class="d4-c"><h3>'+ic('chart')+' Control de gestión <span>promedios del período</span></h3><div class="d4-kpis k3">'+
-     K(tiempoTxt(tA.p),'Aprobación',tA.n?'envío → firma · '+tA.n+' AST':'sin datos')+
-     K(tiempoTxt(tC.p),'Corrección',tC.n?'devolución → reenvío · '+tC.n+' AST':'sin datos')+
-     K(tiempoTxt(tZ.p),'Creación → autorización',tZ.n?tZ.n+' AST':'sin datos')+'</div></div></div>';
+     K(tiempoTxt(tZ.p),'Tiempo en hacer la AST',tZ.n?'desde que empieza a llenarla hasta que la envía · '+tZ.n+' AST':'sin datos')+
+     K(tiempoTxt(tA.p),'Tiempo en firmar',tA.n?'desde que llega para firma hasta que se firma · '+tA.n+' AST':'sin datos')+
+     K(tiempoTxt(tC.p),'Tiempo de corrección',tC.n?'devolución → reenvío · '+tC.n+' AST':'sin datos')+'</div></div></div>';
   h+='<div class="d4-grid">';
   h+='<div class="d4-c s4"><h3>AST por estado</h3>'+gDona([['Firmadas',fir,'#2AA353'],['Pendientes',pen,'#D93A3A'],['En corrección',cor,'#E0A21B'],['Rechazadas',rec,'#6B7A8C'],['Vencidas',ven,'#A9B4C0']])+'</div>';
   h+='<div class="d4-c s8"><h3>Tendencia <span>creadas y autorizadas</span></h3>'+gTendencia(F,r)+'</div>';
@@ -9123,7 +9175,7 @@ function pintaD4(){
             corregidas:contar(F.filter(x=>esDev(x)&&(esFirm(x)||x.estado==='pendiente')),x=>(x.responsable||'').trim()||'Sin nombre')};
   h+='<div class="d4-c s4"><h3>Ranking de usuarios</h3><div class="seg">'+[['creadas','Creadas'],['autorizadas','Autorizadas'],['corregidas','Corregidas']]
      .map(o=>'<button class="'+(D4.rk===o[0]?'on':'')+'" onclick="D4.rk=\''+o[0]+'\';pintaD4()">'+o[1]+'</button>').join('')+'</div>'+gBarras(rk[D4.rk].map(z=>[z[0],z[1]]),8)+'</div>';
-  h+='<div class="d4-c s4"><h3>Rendimiento <span>tiempo promedio</span></h3>'+gRend([['Aprobación',tA],['Revisión y corrección',tC],['Cierre (creación → autorización)',tZ]])+'</div>';
+  h+='<div class="d4-c s4"><h3>Rendimiento <span>tiempo promedio</span></h3>'+gRend([['Hacer la AST',tZ],['Firmar la AST',tA],['Corrección',tC]])+'</div>';
   const esp=contar(F,x=>nomArea(x.area)+' · '+(nombreLinea(x.area,x.linea)||(x.contenido||{}).lineaN||x.linea||'—'));
   h+='<div class="d4-c s6"><h3>AST por especialidad <span>área · línea</span></h3>'+tablaD4(esp.slice(0,10),F,x=>nomArea(x.area)+' · '+(nombreLinea(x.area,x.linea)||(x.contenido||{}).lineaN||x.linea||'—'))+'</div>';
   const pps=contar(F.filter(esPend),x=>asignadoTxt(x.contenido||{}));
@@ -9200,8 +9252,8 @@ function csvD4(){
   if(D4.area) F=F.filter(x=>x.area===D4.area); if(D4.sup) F=F.filter(x=>((x.contenido||{}).supTaller||'').trim()===D4.sup);
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
   const est=x=>esFirm(x)?'Firmada':esAnul(x)?'Rechazada':esVenc(x)?'Vencida':esCorr(x)?'En corrección':esPend(x)?'Pendiente':'En llenado';
-  const filas=[['Número','Fecha','Área','Línea','Estado','Colaborador','Supervisor asignado','Autorizó','Devuelta','Aprobación (min)','Creación a autorización (min)']]
-    .concat(F.map(x=>[numAST(x),fmtFecha(x.fecha),nomArea(x.area),nombreLinea(x.area,x.linea)||x.linea,est(x),x.responsable,(x.contenido||{}).supTaller,x.sup_nombre,esDev(x)?'Sí':'No',minutosAprobacion(x),minCiclo(x)]));
+  const filas=[['Número','Fecha','Área','Línea','Estado','Colaborador','Supervisor asignado','Autorizó','Devuelta','Tiempo en hacer la AST (min)','Tiempo en firmar (min)']]
+    .concat(F.map(x=>[numAST(x),fmtFecha(x.fecha),nomArea(x.area),nombreLinea(x.area,x.linea)||x.linea,est(x),x.responsable,(x.contenido||{}).supTaller,x.sup_nombre,esDev(x)?'Sí':'No',minHacer(x),minFirmar(x)]));
   const b=new Blob(['﻿'+filas.map(f=>f.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='AST_indicadores_'+r[0]+'_'+r[1]+'.csv'; document.body.appendChild(a); a.click(); setTimeout(()=>a.remove(),1000);
 }
@@ -9373,6 +9425,176 @@ admConfig=function(){
     const sub=po.querySelector('.sub');
     if(sub){ sub.insertAdjacentHTML('afterend','<div class="cover-chips"><span>Control de riesgos</span><span>Firmas digitales</span><span>Trazabilidad</span></div>'); }
     po.insertAdjacentHTML('afterbegin',art);
+  }
+})();
+
+
+/* =====================================================================
+   AST DIGITAL 3.5
+   Puesta en marcha por partes · mensajes claros · tiempos de hacer y
+   firmar la AST · inicio con paneles informativos · fondo industrial
+   ===================================================================== */
+
+/* ---------- Mensajes de error que se entienden ---------- */
+function errorLegible(st,t){
+  let d=null; try{ d=JSON.parse(t); }catch(e){}
+  const m=(d&&(d.message||d.hint))||t||'', code=d&&d.code;
+  if(code==='57014') return 'La base de datos tardó más de lo permitido y canceló la operación. No se cambió nada. Vuelve a intentarlo.';
+  if(code==='55P03') return 'La base de datos está ocupada con otra operación. Espera unos segundos y vuelve a intentarlo.';
+  if(code==='42501') return /row-level security|permission denied/i.test(m) ? 'No tienes permiso para esta operación.' : m;
+  if(code==='P0001') return m;
+  if(/JWT/i.test(m) || (st===401 && SB)) return 'Tu sesión venció. Vuelve a iniciar sesión.';
+  if(st===401 || st===403) return 'No tienes permiso para esta operación.';
+  if(code==='PGRST202') return 'Falta instalar una función en Supabase (migración pendiente).';
+  if(st>=500) return 'La base de datos respondió con un error'+(m?': '+m:'')+'.';
+  return m || ('Error '+st);
+}
+/* Registro de lo que pasa en procesos importantes (para revisar después) */
+async function logProceso(proceso,paso,resultado,detalle){
+  try{ if(USR) await rpc('ast_log_proceso',{p_proceso:proceso,p_paso:paso,p_resultado:resultado,p_detalle:String(detalle||'').slice(0,1900)}); }catch(e){}
+}
+
+/* ---------- Puesta en marcha por partes ---------- */
+async function hacerPuesta(){
+  if(!RSP.id) return toast('Primero genera y verifica el respaldo');
+  if(!$('#rsp_ok').checked) return toast('Confirma que guardaste el ZIP fuera de la app');
+  if(V('#rsp_conf').trim()!=='PUESTA EN MARCHA') return toast('Escribe PUESTA EN MARCHA');
+  const ok=await pregunta('¿Hacer la puesta en marcha ahora?\n\nLas '+RSP.conteo.registros+' AST salen de la app y quedan archivadas aparte en Supabase. Los indicadores parten en cero y la próxima AST firmada será la AST-000000.\n\nLas cuentas, firmas registradas y la configuración no cambian.','Hacer la puesta en marcha');
+  if(!ok) return;
+  const btn=document.querySelector('.dan.puesta'); if(btn) btn.disabled=true;
+  const prog=(t,i,n)=>{ const p=$('#pm_prog'); if(p) p.innerHTML='<div class="prog"><i style="width:'+(n?Math.round(i*100/n):0)+'%"></i></div><p class="mini">'+esc(t)+'</p>'; };
+  let paso='inicio';
+  try{
+    const k=await rpc('ast_respaldo_conteo',{});
+    const total=k.registros+k.participantes; let hechas=0;
+    logProceso('puesta en marcha','inicio','ok','respaldo #'+RSP.id+' · '+k.registros+' AST · '+k.participantes+' participantes');
+    for(const tabla of ['registros','participantes']){
+      paso='copiando '+tabla;
+      const n=tabla==='registros'?k.registros:k.participantes;
+      for(let off=0; off<n; off+=20){
+        let r=null, intento=0;
+        while(true){
+          try{ r=await rpc('ast_puesta_copiar',{p_respaldo:RSP.id,p_tabla:tabla,p_desde:off,p_cuantas:20}); break; }
+          catch(e){ if(++intento>=3) throw e; await new Promise(z=>setTimeout(z,1500*intento)); }
+        }
+        hechas+=r.copiadas;
+        prog('Copiando al archivo aparte: '+hechas+' de '+total,hechas,total);
+        if(r.copiadas<20) break;
+      }
+    }
+    paso='paso final'; prog('Revisando y reiniciando la numeración…',total,total);
+    const r=await rpc('ast_puesta_en_marcha',{p_respaldo:RSP.id,p_confirmacion:'PUESTA EN MARCHA'});
+    try{ indexedDB.deleteDatabase('ast_digital_cache'); CACHE.abierta=null; CACHE.db=null; }catch(e){}
+    INI.data=[]; HIST.data=[]; D4C.key=''; PUESTA=undefined; CORR={n:0,mapa:{},rev:{}}; RSP={estado:'',zip:null,nombre:'',id:null,conteo:null,res:null};
+    await pregunta('Puesta en marcha lista.\n\n'+r.registros+' AST y '+r.participantes+' participantes quedaron archivados aparte. La próxima AST firmada será la AST-000000.','Entendido',false);
+    menuVista('');
+  }catch(e){
+    logProceso('puesta en marcha',paso,'error',e.message);
+    if(btn) btn.disabled=false;
+    prog('',0,1);
+    await pregunta('No se pudo terminar la puesta en marcha ('+paso+').\n\n'+e.message+'\n\nNo se sacó ninguna AST de la app. Puedes volver a tocar «Hacer la puesta en marcha»: lo que ya se copió no se repite.','Entendido',false);
+  }
+}
+/* Pantalla de respaldo: se suma el registro del proceso */
+const _admRespaldo34=admRespaldo;
+admRespaldo=async function(){
+  await _admRespaldo34();
+  if(vista!=='adm-respaldo') return;
+  const b=document.querySelector('#app .dan'); if(b && /puesta en marcha/i.test(b.textContent)){ b.classList.add('puesta'); b.insertAdjacentHTML('beforebegin','<div id="pm_prog"></div>'); }
+  let L=[]; try{ L=(await rpc('ast_registro_procesos_lista',{}))||[]; }catch(e){ return; }
+  if(!L.length || vista!=='adm-respaldo') return;
+  $('#app').insertAdjacentHTML('beforeend','<div class="card"><h2>'+ic('history')+' Registro del proceso</h2>'+L.slice(0,12).map(x=>
+    '<div class="traza"><div class="t-a"><span class="num">'+esc(fechaHora(x.ts))+'</span> · '+esc(x.proceso)+' · '+esc(x.paso)+' · <b class="'+(x.resultado==='ok'?'t-ok':'t-mal')+'">'+esc(x.resultado)+'</b></div>'+
+    '<div class="mini">'+esc(x.nombre||'')+(x.detalle?' · '+esc(x.detalle):'')+'</div></div>').join('')+'</div>');
+};
+
+/* ---------- Tiempos: hacer la AST y firmarla ---------- */
+// Hacer: desde que empieza a completar la AST hasta que la envía a firma.
+// Firmar: desde que la AST llega para firma hasta que la firma termina.
+function tsEnvio(x){ const a=((x.contenido||{}).auditoria||[]).find(z=>z.ts&&/envi[oó] a firma/i.test(z.a||'')); return a?a.ts:null; }
+function minHacer(x){
+  const c=x.contenido||{}, env=tsEnvio(x);
+  if(c.inicioLlenado && env){ const m=minutosEntre(c.inicioLlenado,env); if(m!=null) return m; }
+  return (typeof c.tLlenado==='number' && c.tLlenado>0) ? c.tLlenado : null;
+}
+function minFirmar(x){ return esFirm(x)?minutosAprobacion(x):null; }
+const SEL_D5=SEL_LIGERO+',c_tll:contenido->tLlenado,c_ini:contenido->>inicioLlenado';
+const _norm34=norm;
+norm=function(x){ const y=_norm34(x); if(y && y._ligero && x.c_ini!==undefined) y.contenido.inicioLlenado=x.c_ini||undefined; return y; };
+
+/* ---------- Inicio: acciones arriba, paneles informativos abajo ---------- */
+function panelInfo(icono,titulo,cuerpo,extra,cls){ return '<section class="wi'+(cls?' '+cls:'')+'"><div class="wi-h">'+ic(icono)+'<h3>'+esc(titulo)+'</h3>'+(extra?'<span>'+extra+'</span>':'')+'</div>'+cuerpo+'</section>'; }
+function datoInfo(v,t,cls){ return '<div class="wd '+(cls||'')+'"><b>'+v+'</b><span>'+esc(t)+'</span></div>'; }
+async function renderPanel(){
+  $('#titulo').textContent='AST DIGITAL';
+  $('#meta').textContent=fmtFecha(hoy())+' · Taller SMAN';
+  document.body.classList.add('ancha');
+  const conHist=puede('archivo');
+  $('#app').innerHTML='<div class="op-grid">'+tarjetaTaller()+(puede('pendientes')?tarjetaPendientes(null):'')+'</div>'+
+    '<div class="wi-grid" id="ini_w"><section class="wi"><p class="mini">Cargando el día…</p></section></div>'+
+    (conHist?'':'<div class="qr-mini" onclick="verQR()"><img src="'+QR_DATA+'" alt="QR"><div><b>Código QR de ingreso</b><span class="mini">Tócalo para ampliarlo</span></div></div>');
+  barra([]);
+  let d=[], sem=[];
+  try{
+    d=(await api('ast_registros?fecha=eq.'+hoy()+'&select=id,fecha,estado,area,linea,hora_inicio,hora_fin,sup_nombre,sup_hora,responsable,c_supid:contenido->>supId'))||[];
+    if(conHist) sem=await traerLigero('ast_registros?fecha=gte.'+sumarDias(hoy(),-6)+'&order=creado.desc',SEL_D5);
+  }catch(e){ const el=$('#ini_w'); if(el) el.innerHTML=panelInfo('alert','No se pudo leer el día','<p class="mini">'+esc(e.message)+'</p>'); return; }
+  if(vista||AREA) return;
+  const pend=d.filter(x=>x.estado==='pendiente'); PENDS=pend.length;
+  const n=$('#tc_num'), c=$('#tc_pend');
+  if(n){ n.textContent=pend.length; n.classList.toggle('hay',pend.length>0); }
+  if(c) c.textContent=pend.length?'AST esperando firma hoy':'No hay AST esperando firma';
+  const cuenta=e=>d.filter(x=>estadoReal(x)===e).length;
+  let h='';
+  const mias=USR?pend.filter(x=>x.c_supid===USR.id).length:0;
+  if(mias) h+='<div class="msg e wi-full" style="cursor:pointer" onclick="soloMias=true;menuVista(\'firmas\')"><b>Tienes '+mias+' AST esperando tu firma.</b> <u>Revisar y firmar</u></div>';
+  h+=panelInfo('clock','Hoy en el taller','<div class="wd-grid">'+datoInfo(cuenta('firmada'),'Autorizadas','v')+datoInfo(cuenta('pendiente'),'Esperando firma','r')+
+     datoInfo(cuenta('borrador'),'En llenado','a')+datoInfo(cuenta('archivada'),'Cerradas','g')+'</div>',d.length+' AST');
+  if(conHist){
+    const tH=prom(sem.map(minHacer)), tF=prom(sem.map(minFirmar));
+    h+=panelInfo('chart','Últimos 7 días','<div class="wd-grid">'+datoInfo(sem.length,'AST emitidas')+datoInfo(sem.filter(esFirm).length,'Firmadas','v')+
+       datoInfo(tiempoTxt(tH.p),'Tiempo en hacer la AST')+datoInfo(tiempoTxt(tF.p),'Tiempo en firmar')+'</div>','promedios');
+    const ult=sem.filter(esFirm).slice(0,5);
+    h+=panelInfo('check','Últimas autorizadas',ult.length?'<ul class="wl">'+ult.map(x=>'<li><b>'+esc(numAST(x)||'—')+'</b><span>'+esc(tituloGuardado(x))+'</span><small>'+esc(x.sup_nombre||'')+' · '+esc(fmtFecha(x.fecha))+' '+esc(x.sup_hora||'')+'</small></li>').join('')+'</ul>'
+       :'<p class="mini wi-vacio">Todavía no hay AST autorizadas esta semana.</p>');
+    /* Actividad reciente: lo último que pasó en las AST */
+    const ev=[]; sem.forEach(x=>((x.contenido||{}).auditoria||[]).forEach(z=>{ if(z.ts) ev.push({ts:z.ts,a:z.a||'',q:z.q||'',t:tituloGuardado(x),n:numAST(x)}); }));
+    ev.sort((p,q)=>p.ts<q.ts?1:-1);
+    h+=panelInfo('history','Actividad reciente',ev.length?'<ul class="wl wl-ev">'+ev.slice(0,6).map(e=>'<li><b>'+esc(fechaHora(e.ts).slice(0,5)+' '+fechaHora(e.ts).slice(11))+'</b><span>'+esc(e.a.split(' · ')[0])+' · '+esc(e.q)+'</span><small>'+esc((e.n?e.n+' · ':'')+e.t)+'</small></li>').join('')+'</ul>'
+       :'<p class="mini wi-vacio">Sin movimientos en los últimos 7 días.</p>','últimos 7 días','wi-2');
+    const porA={}; d.forEach(x=>{ const k=x.area; const o=porA[k]=porA[k]||{t:0,f:0,p:0}; o.t++; if(estadoReal(x)==='firmada') o.f++; if(x.estado==='pendiente') o.p++; });
+    const ak=Object.keys(porA).sort((p,q)=>porA[q].t-porA[p].t);
+    h+=panelInfo('grid','Áreas hoy',ak.length?'<ul class="wl wl-ar">'+ak.slice(0,6).map(k=>'<li><b>'+porA[k].t+'</b><span>'+esc(nomArea(k))+'</span><small>'+porA[k].f+' autorizadas'+(porA[k].p?' · '+porA[k].p+' esperando firma':'')+'</small></li>').join('')+'</ul>'
+       :'<p class="mini wi-vacio">Todavía no hay AST hoy.</p>',ak.length+' áreas');
+  } else {
+    h+=panelInfo('shield','Antes de empezar','<ul class="wl wl-ok"><li><span>Revisa que tu AST esté en verde antes de iniciar el trabajo.</span></li><li><span>Si te sumas a un trabajo con AST firmada, regístrate en ella.</span></li><li><span>Ante cualquier condición insegura, detén el trabajo.</span></li></ul>');
+  }
+  const el=$('#ini_w'); if(el) el.innerHTML=h;
+}
+
+/* ---------- Fondo industrial: AST, planificación, mantenimiento, ingeniería, procesos ---------- */
+(function(){
+  const s='<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 420 420" fill="none" stroke="#9EC3E8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+
+    /* casco */ '<g transform="translate(22 26)"><path d="M4 34a26 26 0 0 1 52 0"/><path d="M0 34h60v7H0z"/><path d="M22 10v-4h16v4M30 6v18"/></g>'+
+    /* checklist AST */ '<g transform="translate(150 18)"><rect x="0" y="6" width="44" height="58" rx="4"/><rect x="12" y="0" width="20" height="10" rx="3"/><path d="M8 24l4 4 7-8M24 25h12M8 40l4 4 7-8M24 41h12M24 55h12"/></g>'+
+    /* carta Gantt */ '<g transform="translate(262 28)"><path d="M0 0v62h120"/><rect x="8" y="8" width="44" height="8" rx="2"/><rect x="30" y="22" width="52" height="8" rx="2"/><rect x="60" y="36" width="36" height="8" rx="2"/><rect x="84" y="50" width="30" height="8" rx="2"/></g>'+
+    /* curva S */ '<g transform="translate(24 128)"><path d="M0 0v70h110"/><path d="M4 66c30 0 34-4 50-30s22-30 52-32" stroke-width="2.2"/><path d="M4 66c34 0 40-10 56-34s28-26 50-26" stroke-dasharray="3 5"/></g>'+
+    /* engranaje */ '<g transform="translate(178 128)"><circle cx="30" cy="30" r="12"/><circle cx="30" cy="30" r="4"/><path d="M30 4v9M30 47v9M4 30h9M47 30h9M12 12l6 6M42 42l6 6M48 12l-6 6M18 42l-6 6"/></g>'+
+    /* llave */ '<g transform="translate(280 130) rotate(35)"><path d="M0 8a10 10 0 1 0 18 6l46 0 0-8-46 0a10 10 0 0 0-18 2z"/><path d="M4 10h6"/></g>'+
+    /* firma */ '<g transform="translate(26 262)"><path d="M0 26c10-22 20-22 18 0s14-22 22-6 12 8 20-2"/><path d="M-4 38h72"/></g>'+
+    /* riesgo */ '<g transform="translate(140 248)"><path d="M28 2l27 48H1z"/><path d="M28 18v16M28 41v1"/></g>'+
+    /* flujo de proceso */ '<g transform="translate(228 254)"><rect x="0" y="0" width="30" height="20" rx="4"/><rect x="58" y="0" width="30" height="20" rx="4"/><rect x="116" y="0" width="30" height="20" rx="4"/><path d="M30 10h28M88 10h28M52 6l6 4-6 4M110 6l6 4-6 4"/><path d="M15 20v22h116V20"/></g>'+
+    /* plano / pie de metro */ '<g transform="translate(30 344)"><path d="M0 0h120v40H0z"/><path d="M10 0v10M20 0v6M30 0v10M40 0v6M50 0v10M60 0v6M70 0v10M80 0v6M90 0v10M100 0v6M110 0v10"/></g>'+
+    /* matriz de riesgo */ '<g transform="translate(196 330)"><rect x="0" y="0" width="56" height="56"/><path d="M14 0v56M28 0v56M42 0v56M0 14h56M0 28h56M0 42h56"/></g>'+
+    /* reductor (taller) */ '<g transform="translate(300 330)"><rect x="0" y="10" width="64" height="40" rx="6"/><circle cx="20" cy="30" r="10"/><circle cx="46" cy="30" r="6"/><path d="M64 30h26M-20 30h20"/></g>'+
+    '</svg>';
+  document.documentElement.style.setProperty('--fondo-ast','url("data:image/svg+xml,'+encodeURIComponent(s)+'")');
+  /* Portada: los temas pasan a ser información, no botones */
+  const ch=document.querySelector('#portada .cover-chips');
+  if(ch){
+    ch.className='cover-temas';
+    ch.innerHTML=[['shield','Control de riesgos','Riesgos y controles de cada tarea'],['sign','Firmas digitales','Autorización registrada y segura'],['history','Trazabilidad','Quién, qué y cuándo, siempre']]
+      .map(t=>'<div class="ct">'+ic(t[0])+'<div><b>'+t[1]+'</b><span>'+t[2]+'</span></div></div>').join('');
   }
 })();
 
