@@ -1211,6 +1211,8 @@ body::after{background:rgba(7,26,46,.87)!important}
 /* El fondo de la página no debe tapar la trama industrial */
 html{background:#071A2E!important}
 body{background:transparent!important}
+.pm-curso{border:2px solid #E0A21B!important}
+.pm-curso button{width:100%}
 </style>
 
 </head>
@@ -1261,7 +1263,7 @@ const CONFIG = {
   SB_KEY : 'sb_publishable_WOTPiecKx5ai4F6feLbexQ_doYTScvd',
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '3.5.1',
+  VERSION : '3.6',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -9619,6 +9621,88 @@ async function renderPanel(){
       .map(t=>'<div class="ct">'+ic(t[0])+'<div><b>'+t[1]+'</b><span>'+t[2]+'</span></div></div>').join('');
   }
 })();
+
+
+/* =====================================================================
+   AST DIGITAL 3.6 · puesta en marcha por partes de principio a fin
+   Ningún paso depende de la velocidad de Supabase; si se corta, se retoma.
+   ===================================================================== */
+async function rpcReintento(f,args,veces){
+  let ult=null;
+  for(let i=0;i<(veces||4);i++){
+    try{ return await rpc(f,args); }
+    catch(e){ ult=e; if(/permiso|no existe|PUESTA EN MARCHA|respaldo nuevo|nuevas|Escribe|no está en curso/i.test(e.message)) break; await new Promise(z=>setTimeout(z,1200*(i+1))); }
+  }
+  throw ult;
+}
+function progPuesta(t,i,n){ const p=$('#pm_prog'); if(p) p.innerHTML='<div class="prog"><i style="width:'+(n?Math.min(100,Math.round(i*100/n)):0)+'%"></i></div><p class="mini">'+esc(t)+'</p>'; }
+async function sacarYTerminar(pid,total){
+  let hechas=0, quedan=total;
+  while(true){
+    const r=await rpcReintento('ast_puesta_sacar',{p_puesta:pid,p_cuantas:20});
+    quedan=r.quedan; hechas=Math.max(hechas,total-quedan);
+    progPuesta('Sacando de la app: '+hechas+' de '+total+' AST',hechas,total);
+    if(!r.quedan) break;
+    if(!r.sacadas) throw new Error('No se pudo avanzar al sacar las AST. Vuelve a tocar el botón.');
+  }
+  progPuesta('Terminando: numeración nueva desde AST-000000…',total,total);
+  return await rpcReintento('ast_puesta_terminar',{p_puesta:pid});
+}
+async function puestaLista(r){
+  try{ indexedDB.deleteDatabase('ast_digital_cache'); CACHE.abierta=null; CACHE.db=null; }catch(e){}
+  INI.data=[]; HIST.data=[]; D4C.key=''; PUESTA=undefined; CORR={n:0,mapa:{},rev:{}}; RSP={estado:'',zip:null,nombre:'',id:null,conteo:null,res:null};
+  await pregunta('Puesta en marcha lista.\n\n'+r.registros+' AST y '+r.participantes+' participantes quedaron archivados aparte. La próxima AST firmada será la AST-000000.','Entendido',false);
+  menuVista('');
+}
+async function fallaPuesta(paso,e){
+  logProceso('puesta en marcha',paso,'error',e.message);
+  document.querySelectorAll('.dan.puesta,#pm_seguir').forEach(b=>b.disabled=false);
+  await pregunta('La puesta en marcha quedó a medio camino ('+paso+').\n\n'+e.message+'\n\nNo se pierde nada: lo que ya salió de la app está guardado en el archivo aparte. Toca el botón otra vez y sigue desde donde quedó.','Entendido',false);
+  admRespaldo();
+}
+async function hacerPuesta(){
+  if(!RSP.id) return toast('Primero genera y verifica el respaldo');
+  if(!$('#rsp_ok').checked) return toast('Confirma que guardaste el ZIP fuera de la app');
+  if(V('#rsp_conf').trim()!=='PUESTA EN MARCHA') return toast('Escribe PUESTA EN MARCHA');
+  const ok=await pregunta('¿Hacer la puesta en marcha ahora?\n\nLas '+RSP.conteo.registros+' AST salen de la app y quedan archivadas aparte en Supabase. Los indicadores parten en cero y la próxima AST firmada será la AST-000000.\n\nPide que nadie cree ni firme AST mientras dura (unos minutos). Las cuentas, firmas registradas y la configuración no cambian.','Hacer la puesta en marcha');
+  if(!ok) return;
+  document.querySelectorAll('.dan.puesta').forEach(b=>b.disabled=true);
+  let paso='copiar';
+  try{
+    const k=await rpcReintento('ast_respaldo_conteo',{});
+    const total=k.registros+k.participantes; let hechas=0;
+    logProceso('puesta en marcha','inicio','ok','respaldo #'+RSP.id+' · '+k.registros+' AST · '+k.participantes+' participantes');
+    for(const tabla of ['registros','participantes']){
+      const n=tabla==='registros'?k.registros:k.participantes;
+      for(let off=0; off<n; off+=20){
+        const r=await rpcReintento('ast_puesta_copiar',{p_respaldo:RSP.id,p_tabla:tabla,p_desde:off,p_cuantas:20});
+        hechas+=r.copiadas; progPuesta('Copiando al archivo aparte: '+hechas+' de '+total,hechas,total);
+        if(r.copiadas<20) break;
+      }
+    }
+    paso='iniciar';
+    const ini=await rpcReintento('ast_puesta_iniciar',{p_respaldo:RSP.id,p_confirmacion:'PUESTA EN MARCHA'});
+    paso='sacar de la app';
+    const r=await sacarYTerminar(ini.puesta,k.registros);
+    await puestaLista(r);
+  }catch(e){ await fallaPuesta(paso,e); }
+}
+async function seguirPuesta(pid,total){
+  const b=$('#pm_seguir'); if(b) b.disabled=true;
+  try{ const r=await sacarYTerminar(pid,total); await puestaLista(r); }
+  catch(e){ await fallaPuesta('continuar',e); }
+}
+/* Si quedó a medio camino (por ejemplo, se cerró la app), se ofrece continuar sin otro respaldo */
+const _admRespaldo35=admRespaldo;
+admRespaldo=async function(){
+  await _admRespaldo35();
+  if(vista!=='adm-respaldo') return;
+  let c=null; try{ c=await rpc('ast_puesta_en_curso',{}); }catch(e){ return; }
+  if(!c || vista!=='adm-respaldo') return;
+  $('#app').insertAdjacentHTML('afterbegin','<div class="card sec7 pm-curso"><h2>'+ic('alert')+' Puesta en marcha a medio camino</h2>'+
+    '<p>Empezó el '+esc(fechaHora(c.ts))+'. Quedan <b>'+c.quedan+'</b> de '+c.registros+' AST por sacar de la app. Lo que ya salió está guardado en el archivo aparte.</p>'+
+    '<div id="pm_prog"></div><button id="pm_seguir" class="dan" onclick="seguirPuesta('+c.puesta+','+c.registros+')">Continuar la puesta en marcha</button></div>');
+};
 
 /* ---------- Inicio: no se muestra nada hasta validar dispositivo, sesión y permisos ---------- */
 (async function(){
