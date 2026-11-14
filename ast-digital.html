@@ -922,6 +922,121 @@ table.mat td:first-child,table.mat th:first-child{min-width:170px;white-space:no
 .grid.areas .tile .in>:first-child{grid-row:1 / span 2;transform:none!important;margin:0!important}
 .grid.areas .tile .in b{margin:0!important;font-size:14px;line-height:1.2;align-self:end}
 .grid.areas .tile .in small{align-self:start;margin:2px 0 0!important}
+
+/* ===================== AST DIGITAL 3.3 ===================== */
+
+/* ---------- Encabezado compacto ---------- */
+#top header .deco,#top header .gloss,#top header .brand{display:none!important}
+#nubeChip{display:inline-flex;align-items:center;gap:7px;width:auto;margin:0;padding:6px 11px;border-radius:999px;cursor:pointer;
+  font:600 12px/1 var(--f-ui,inherit);letter-spacing:.01em;color:#E8F1FB;background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.24);box-shadow:none;white-space:nowrap;position:relative;z-index:2}
+#nubeChip i{width:9px;height:9px;border-radius:50%;background:#7BD69B;box-shadow:0 0 0 3px rgba(123,214,155,.22);flex:none}
+#nubeChip.n-sync i{background:#7FC3FF;box-shadow:0 0 0 3px rgba(127,195,255,.25);animation:latido 1s ease-in-out infinite}
+#nubeChip.n-off i{background:#B8C2CC;box-shadow:0 0 0 3px rgba(184,194,204,.25)}
+#nubeChip.n-err i{background:#FF6B6B;box-shadow:0 0 0 3px rgba(255,107,107,.28)}
+#nubeChip.n-err,#nubeChip.n-off{background:rgba(198,40,40,.32);border-color:rgba(255,160,160,.55)}
+@keyframes latido{50%{opacity:.35}}
+@media (min-width:760px){
+  #top header{display:grid!important;grid-template-columns:auto auto minmax(0,1fr) auto auto auto;
+    grid-template-areas:"menu nav titulo nube quien salir" "menu nav meta nube quien salir";
+    align-items:center;column-gap:14px;row-gap:2px;padding:10px 16px 11px!important}
+  #top header .menu-btn{position:static!important;grid-area:menu;margin:0}
+  #top header .h-nav{grid-area:nav;padding:0!important;margin:0!important}
+  #top header .h-nav:empty{display:none}
+  #top header .h-nav .volver{margin:0}
+  #top header .h-area{grid-area:titulo;padding:0!important;margin:0!important;font-size:20px;line-height:1.15;align-self:end}
+  #top header .h-meta{grid-area:meta;display:block!important;padding:0!important;margin:0!important;align-self:start;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #top header .quien{grid-area:quien;display:flex!important;padding:0!important;margin:0!important;white-space:nowrap;font-size:12.5px}
+  #top header #nubeChip{grid-area:nube}
+  #top header .salir{position:static!important;grid-area:salir;margin:0}
+  #top header .quien:empty{display:none!important}
+}
+@media (max-width:759px){
+  #top header{padding:9px 14px 10px!important}
+  #top header .h-area{font-size:18px!important;margin-top:2px!important}
+  #top header .h-meta{display:block!important;font-size:12px;margin-top:2px!important}
+  #top header .quien{display:none!important}
+  #top header #nubeChip{position:absolute;right:66px;top:9px;padding:0;width:34px;height:34px;justify-content:center}
+  #top header #nubeChip span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  #top header .h-nav,#top header .h-area,#top header .h-meta{padding-right:96px!important}
+  #top header .h-area{font-size:17px!important}
+}
+
+/* ---------- Aviso de conexión: compacto, sin tapar botones ---------- */
+.alerta{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;z-index:5;max-width:none!important;
+  margin:12px 16px 0;display:flex!important;flex-direction:column;align-items:stretch;gap:10px;padding:12px 14px;border-radius:14px;
+  background:#FFF4F4;color:#7A1F1F;border:1px solid #F3B9B9;box-shadow:0 10px 30px rgba(10,37,64,.28)}
+.alerta[style*="display:none"],.alerta[style*="display: none"]{display:none!important}
+.alerta.a-off{background:#F4F6F8;color:#2E3B48;border-color:#CBD3DC}
+.alerta .al-t{font-size:13px;line-height:1.4}
+.alerta .al-t b{display:block;font-size:14px;margin-bottom:2px}
+.alerta .al-b{display:flex;gap:8px}
+.alerta .al-b button{width:auto;flex:1;margin:0;padding:10px 12px;font-size:13px;letter-spacing:0}
+.alerta .al-b button.sec{flex:0 0 auto;background:#fff;color:#2E3B48;border:1px solid #CBD3DC}
+@media (min-width:760px){ .alerta{flex-direction:row;align-items:center} .alerta .al-t{flex:1} .alerta .al-b{flex:none} .alerta .al-b button{flex:none} }
+
+/* ---------- Datos guardados en el equipo ---------- */
+.aviso-cache{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:11px 14px;border-radius:12px;
+  background:#FFF8E6;border:1px solid #F2D58A;color:#5B4510;font-size:13px;line-height:1.35}
+.aviso-cache>.ic-s,.aviso-cache>svg{flex:none;width:20px;height:20px}
+.aviso-cache div{flex:1;min-width:0}
+.aviso-cache b{display:block}
+.aviso-cache button{width:auto;flex:none;margin:0}
+
+/* ---------- Menú lateral ---------- */
+.lat-tog{display:flex!important;align-items:center;justify-content:space-between;width:100%;background:none!important;border:0!important;
+  box-shadow:none!important;cursor:pointer;text-align:left;margin:0;padding-right:16px}
+.lat-tog .ch{display:inline-flex;transition:transform .15s ease}
+.lat-tog .ch svg{width:15px;height:15px}
+.lat-tog.open .ch{transform:rotate(180deg)}
+.lat-pie .lp-est{cursor:pointer;font-weight:600}
+.lat-pie .lp-est.n-ok,.lat-pie .lp-est.n-sync{color:#7BD69B}
+.lat-pie .lp-est.n-off{color:#C8D0D8}
+.lat-pie .lp-est.n-err{color:#F0A0A0}
+.lat-pie .lp-salir{display:inline-block;margin-top:8px;cursor:pointer;text-decoration:underline;color:#CFE1F1}
+
+/* ---------- Configuración ---------- */
+.cfg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.cfg-t{display:flex;align-items:center;gap:12px;width:100%;margin:0;padding:14px;text-align:left;border-radius:14px;
+  background:#fff;color:var(--txt,#0A2540);border:1px solid #DCE5EF;box-shadow:0 1px 2px rgba(10,37,64,.06)}
+.cfg-t:hover{border-color:#8DB7E6}
+.cfg-ic{flex:none;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:#EAF2FB;color:#0B4EA2}
+.cfg-ic svg{width:20px;height:20px}
+.cfg-t b{display:block;font-size:14px}
+.cfg-t small{display:block;font-size:12px;color:#5A6B7D;font-weight:400;margin-top:2px}
+
+/* ---------- Inicio: hoy en el taller ---------- */
+.hoy-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:6px}
+.hoy-k{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:0;padding:12px 14px;border-radius:13px;
+  background:#fff;color:#0A2540;border:1px solid #DCE5EF;box-shadow:none;text-align:left}
+.hoy-k b{font:800 24px/1 var(--f-disp,inherit)}
+.hoy-k small{font-size:12px;color:#5A6B7D;font-weight:500}
+.hoy-k.k-verde b{color:#1B7F3B}
+.hoy-k.k-rojo b{color:#C62828}
+@media (max-width:520px){ .hoy-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+/* ---------- Papelera y administración de una AST ---------- */
+.adm-ast{border:1px dashed #E3A3A3}
+.adm-ast button{width:auto}
+.astc.pap{opacity:.95}
+.pap-m{margin-top:10px;padding:8px 10px;border-radius:9px;background:#F6F8FA;font-size:12.5px;color:#33475B;line-height:1.45}
+
+/* ---------- Claves temporales ---------- */
+.clave-t{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0;padding:6px 9px;border-radius:9px;
+  background:#FFF8E6;color:#5B4510;font-size:12px}
+.clave-t svg{width:14px;height:14px}
+.clave-t.venc{background:#FDECEC;color:#8A1F1F}
+.clave-una{display:flex;align-items:center;gap:10px;margin:8px 0;padding:10px 12px;border-radius:10px;background:#F2F6FA;border:1px solid #DCE5EF}
+.clave-una .num{flex:1;font-size:18px;font-weight:700;letter-spacing:.04em;user-select:all}
+.clave-una button{width:auto;margin:0}
+
+/* ---------- Sin desbordes ---------- */
+#app{overflow-wrap:anywhere}
+.tabla-sc{max-width:100%;overflow-x:auto}
+
+/* Menú: textos alineados a la izquierda */
+#lateral .lat-b{justify-content:flex-start!important;text-align:left!important}
 </style>
 
 </head>
@@ -972,7 +1087,7 @@ const CONFIG = {
   SB_KEY : 'sb_publishable_WOTPiecKx5ai4F6feLbexQ_doYTScvd',
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '3.2',
+  VERSION : '3.3',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -1665,7 +1780,7 @@ async function ir(area,linea){
     render();
   }
 }
-window.addEventListener('popstate',function(ev){
+window.addEventListener('popstate-v2',function(ev){
   const st=ev.state||{};
   if(st.a!==undefined){ ir(st.a,st.l); } else { ir(null); }
 });
@@ -2057,7 +2172,7 @@ function renderAST(){
     h+='<div class="traza"><div class="t-a"><b>'+(i+1)+'. '+esc(p.nombre)+'</b>'+(p.firma?' <img src="'+p.firma+'" style="height:26px;vertical-align:middle">':'')+'</div>'+
        '<div class="mini"><span class="num">'+esc(p.rut||'')+'</span> · '+esc(p.cargo||'')+' · '+esc(p.empresa||'')+' · <span class="num">'+esc(p.hora||'')+'</span></div>'+
        (p.animo?'<div class="mini">Estado: '+esc(p.animo)+' · ¿Afecta la tarea?: '+esc(p.afecta||'—')+'</div>':'')+
-       (p.post_firma?'<div class="mini post-firma">Se incorporó después de la firma'+(p.registrado_en?' · '+esc(fechaHora(p.registrado_en)):'')+(p.registrado_por?' · registró '+esc(p.registrado_por):'')+'</div>':'')+'</div>';
+       (p.post_firma?'<div class="mini post-firma">Se incorporó después de la firma'+(p.registrado_en?' · '+esc(fechaHora(p.registrado_en)):'')+(p.registrado_por?' · registró '+esc(p.registrado_por):'')+(p.motivo?' · motivo: '+esc(p.motivo):'')+'</div>':'')+'</div>';
     });
   }
   h+='</div>';
@@ -2340,7 +2455,7 @@ async function guardar(estado){
   const prev=(ast&&ast.contenido)||{};
   const cont={ descripcion:$('#f_desc').value.trim(), lugar:$('#f_lugar').value.trim(),
     fechaIni:$('#f_fini').value, fechaFin:$('#f_ffin').value,
-    supTaller:supElegido2().n, supId:supElegido2().id, animo:W.animo, animoOtro:V('#f_animo_otro').trim(), afecta:V('#f_afecta'),
+    supTaller:supElegido2().n, supId:supElegido2().id, supOtros:!!supElegido2().otro, animo:W.animo, animoOtro:V('#f_animo_otro').trim(), afecta:V('#f_afecta'),
     firmaColab: padVacio ? (prev.firmaColab||'') : $('#pad').toDataURL('image/png'),
     p1:W.p1, p2:W.p2, p3:W.p3, comentario:$('#f_com').value.trim(),
     epp:W.epp.concat(W.eppOtros||[]), equipos:W.equipos.concat(W.eqOtros||[]),
@@ -2641,11 +2756,11 @@ async function renderPersonal(){
   $('#app').innerHTML='<p class="mini">Buscando…</p>';
   let data=[], ps=[];
   try{
-    data=await api('ast_registros?fecha=gte.'+fechaMenos(perDias)+'&order=fecha.desc&limit=800');
+    data=await traerLigero('ast_registros?fecha=gte.'+fechaMenos(perDias)+'&order=fecha.desc');
     const ids=data.map(x=>x.id);
     if(ids.length){
       for(let i=0;i<ids.length;i+=60){
-        const lote=await api('ast_participantes?ast_id=in.('+ids.slice(i,i+60).join(',')+')&order=creado.asc');
+        const lote=await api('ast_participantes?select='+SEL_PART+'&ast_id=in.('+ids.slice(i,i+60).join(',')+')&order=creado.asc');
         ps=ps.concat(lote||[]);
       }
     }
@@ -2718,12 +2833,12 @@ async function renderRevision(){
   $('#meta').textContent='Firmadas y sin firmar';
   $('#app').innerHTML='<p class="mini">Buscando…</p>';
   let data=[];
-  try{ data=await api('ast_registros?fecha=gte.'+fechaMenos(revDias)+'&order=fecha.desc&limit=800'); }
+  try{ data=await traerLigero('ast_registros?fecha=gte.'+fechaMenos(revDias)+'&order=fecha.desc'); }
   catch(e){ $('#app').innerHTML='<div class="msg e">No se pudo leer.<br><span class="mini">'+esc(e.message)+'</span></div>';
     barra([['Reintentar','sec',renderRevision],['Inicio','sec',()=>{vista='';render();}]]); return; }
   data=data.filter(x=>!esOtros(x.linea));   // «Otros» no se contabiliza
-  const firmadas=data.filter(x=>!!x.sup_firma);
-  const sin=data.filter(x=>!x.sup_firma);
+  const firmadas=data.filter(x=>estaFirmada(x));
+  const sin=data.filter(x=>!estaFirmada(x));
   const lista = revFiltro==='sin' ? sin : firmadas;
   lista.sort((a,b)=> a.fecha<b.fecha?1:a.fecha>b.fecha?-1:0);
   let h='<div class="card sec1"><h2>Período</h2><select onchange="revDias=+this.value;renderRevision()">'+
@@ -2761,7 +2876,7 @@ async function renderArchivo(){
   $('#meta').textContent='Historial y descargas';
   $('#app').innerHTML='<p class="mini">Buscando…</p>';
   let data=[];
-  try{ data=await api('ast_registros?fecha=gte.'+fechaMenos(filtroDias)+'&order=fecha.desc&limit=500'); }
+  try{ data=await traerLigero('ast_registros?fecha=gte.'+fechaMenos(filtroDias)+'&order=fecha.desc'); }
   catch(e){ $('#app').innerHTML='<div class="msg e">No se pudo leer el historial.<br><span class="mini">'+esc(e.message)+'</span></div>';
     barra([['Reintentar','sec',renderArchivo],['Inicio','sec',()=>{vista='';render();}]]); return; }
   if(filtroArea) data=data.filter(x=>x.area===filtroArea);
@@ -2938,7 +3053,7 @@ function astImpresa(x,ps){
        '<div class="mini"><span class="num">'+esc(p.rut||'')+'</span> · '+esc(p.cargo||'')+' · '+esc(p.empresa||'')+
        ' · <span class="num">'+esc(p.hora||'')+'</span></div>'+
        (p.animo?'<div class="mini">Estado: '+esc(p.animo)+' · ¿Afecta la tarea?: '+esc(p.afecta||'—')+'</div>':'')+
-       (p.post_firma?'<div class="mini post-firma">Se incorporó después de la firma'+(p.registrado_en?' · '+esc(fechaHora(p.registrado_en)):'')+(p.registrado_por?' · registró '+esc(p.registrado_por):'')+'</div>':'')+'</div>';
+       (p.post_firma?'<div class="mini post-firma">Se incorporó después de la firma'+(p.registrado_en?' · '+esc(fechaHora(p.registrado_en)):'')+(p.registrado_por?' · registró '+esc(p.registrado_por):'')+(p.motivo?' · motivo: '+esc(p.motivo):'')+'</div>':'')+'</div>';
   });
   s+='</div>';
 
@@ -5439,7 +5554,7 @@ async function renderHistorico(){
     barra([['Reintentar','sec',renderHistorico],['Inicio','sec',()=>{vista='';render();}]]); return;
   }
   const sups=Array.from(new Set(HIST.data.map(x=>x.sup_nombre||'').filter(Boolean))).sort();
-  let h='<div class="msg i">'+ic('lock')+' Aquí quedan todas las AST que completaron su firma. <b>No se pueden eliminar</b>, ni siquiera desde administración. '+
+  let h='<div class="msg i">'+ic('lock')+' Aquí quedan todas las AST que completaron su firma. <b>Nadie puede modificarlas.</b> Solo el administrador puede enviarlas a la papelera, con motivo, y recuperarlas después. '+
     'Si una tiene un error, se crea una nueva versión vinculada o se agrega una nota de corrección; la original se conserva intacta.</div>';
   h+='<div class="card sec1 filtros"><h2>'+ic('search')+' Buscar en el archivo</h2>'+
     '<div class="row"><div><label>Número</label><input id="h_num" inputmode="numeric" placeholder="Ej: 125" value="'+esc(HIST.num)+'"></div>'+
@@ -5555,7 +5670,7 @@ async function renderStats(){
   if(DSH_CACHE.key!==key){
     $('#app').innerHTML='<p class="mini">Calculando con los datos del período…</p>';
     try{
-      const data=await traerTodas('ast_registros?fecha=gte.'+r[0]+'&fecha=lte.'+r[1]+'&order=fecha.desc');
+      const data=await traerLigero('ast_registros?fecha=gte.'+r[0]+'&fecha=lte.'+r[1]+'&order=fecha.desc',SEL_DSH);
       let pp=[]; const ids=data.map(x=>x.id);
       for(let i=0;i<ids.length;i+=60){ const lote=await api('ast_participantes?select=ast_id,rut,nombre,afecta&ast_id=in.('+ids.slice(i,i+60).join(',')+')'); pp=pp.concat(lote||[]); }
       DSH_CACHE={key:key,data:data,pp:pp};
@@ -6039,7 +6154,7 @@ function renderAST(){
       pt+='<div class="traza"><div class="t-a"><b>'+(i+1)+'. '+esc(p.nombre)+'</b>'+(p.firma?' <img src="'+p.firma+'" style="height:26px;vertical-align:middle">':'')+'</div>'+
        '<div class="mini"><span class="num">'+esc(p.rut||'')+'</span> · '+esc(p.cargo||'')+' · '+esc(p.empresa||'')+' · <span class="num">'+esc(p.hora||'')+'</span></div>'+
        (p.animo?'<div class="mini">Estado: '+esc(p.animo)+' · ¿Afecta la tarea?: '+esc(p.afecta||'—')+'</div>':'')+
-       (p.post_firma?'<div class="mini post-firma">Se incorporó después de la firma'+(p.registrado_en?' · '+esc(fechaHora(p.registrado_en)):'')+(p.registrado_por?' · registró '+esc(p.registrado_por):'')+'</div>':'')+'</div>';
+       (p.post_firma?'<div class="mini post-firma">Se incorporó después de la firma'+(p.registrado_en?' · '+esc(fechaHora(p.registrado_en)):'')+(p.registrado_por?' · registró '+esc(p.registrado_por):'')+(p.motivo?' · motivo: '+esc(p.motivo):'')+'</div>':'')+'</div>';
     });
   }
   h+=cardPl('v-part','sec6','<span class="bdg">6</span>Participantes',parts.length+' registrados',parts.length?'ok':'',pt,false,parts.length?parts.length+' personas':'');
@@ -6669,7 +6784,7 @@ async function hacerLogin(){
     aplicarPerfil(p);
     await registrarDispositivo();
     await Promise.all([cargarFirmasReg(), cargarFirmantes(), cargarCorrelativos()]).catch(()=>{});
-    if(USR.cambiar){ vista='clave'; render(); arriba(); return toast('Antes de seguir, cambia tu contraseña temporal'); }
+    if(USR.cambiar){ vista='clave'; render(); arriba(); return USR.claveVencida?null:toast('Antes de seguir, cambia tu contraseña temporal'); }
     const dest=LOGIN_DEST; LOGIN_DEST=null;
     toast('Hola, '+USR.nombre.split(' ')[0]);
     if(dest) dest(); else { vista=''; AREA=null; LIN=null; render(); arriba(); }
@@ -6765,7 +6880,7 @@ const VISTA_PERM2={stats:'dashboard',archivo:'archivo',historico:'archivo',ran:'
   revision:'revision',personal:'revision','adm-usr':'usuarios','adm-usr-ed':'usuarios','adm-fir':'usuarios','adm-fir-ed':'usuarios',
   'adm-act':'auditoria','adm-disp':'dispositivos','adm-matriz':'usuarios',areas:'nueva'};
 let LISTO=false;
-function render(){
+function render33base(){
   if(!LISTO) return;
   const est=estadoReal(ast);
   $('#hz').className='hazard st-'+est;
@@ -6788,8 +6903,8 @@ function render(){
     const R={areas:renderAreas,'adm-areas':admAreas,'adm-area':admArea,'adm-doc':admDoc,'adm-bloques':admBloques,'adm-cat':admCat,
       'adm-preg':admPreg,'adm-gen':admGen,'adm-sup':()=>{vista='adm-usr';admUsuarios();},'adm-log':admLog,'adm-insc':admInscripcion,
       'adm-usr':admUsuarios,'adm-usr-ed':admUsuarioEd,'adm-fir':admFirmas,'adm-fir-ed':admFirmaEd,'adm-act':admActividad,
-      'adm-disp':admDispositivos,'adm-matriz':admMatriz,stats:renderStats,archivo:renderArchivo,historico:renderHistorico,
-      ran:renderRanTaller,firmas:renderFirmas,revision:renderRevision,personal:renderPersonal,mifirma:()=>{vista='adm-fir';admFirmas();}};
+      'adm-disp':admDispositivos,'adm-matriz':admMatriz,stats:renderStats,archivo:renderRegistradas,historico:renderHistorico,
+      ran:renderRanTaller,firmas:renderFirmas,registradas:renderRegistradas,papelera:renderPapelera,'adm-config':admConfig,revision:renderRevision,personal:renderPersonal,mifirma:()=>{vista='adm-fir';admFirmas();}};
     if(R[vista]){ R[vista](); return; }
     vista=''; renderPanel(); return;
   }
@@ -6797,7 +6912,7 @@ function render(){
   if(!A){ $('#app').innerHTML='<div class="msg e">Área no reconocida.</div>'; barra([]); return; }
   if(!LIN){ renderLineas(); return; }
   $('#titulo').textContent = tituloAL(AREA,LIN);
-  $('#meta').textContent = fmtFecha(ast&&ast.fecha?ast.fecha:hoy())+' · '+(ast?((ast.turno||'')+' '+(ast.hora_inicio||'')+'–'+(ast.hora_fin||'')):'sin AST')+(ast&&ast.ran?' · '+ast.ran:'');
+  $('#meta').textContent = fmtFecha(ast&&ast.fecha?ast.fecha:hoy())+' · '+(ast?(/\d/.test(ast.turno||'')?ast.turno:((ast.turno||'')+' '+(ast.hora_inicio||'')+'–'+(ast.hora_fin||''))):'sin AST')+(ast&&ast.ran?' · '+ast.ran:'');
   if(vista==='crear'){ renderForm(); return; }
   if(vista==='registro'){ renderRegistro(); return; }
   if(vista==='firma'){ renderFirma(); return; }
@@ -7340,8 +7455,8 @@ async function admUsuarios(){
   let h=tabsAdm('adm-usr');
   h+='<div class="msg i">Cada persona entra con su propio usuario. Las contraseñas las guarda Supabase cifradas: nadie puede verlas, '+
      'el administrador solo puede restablecerlas con una clave temporal. Los permisos los valida la base de datos en cada operación.</div>';
-  h+='<div class="kpis">'+kpi(USUARIOS.length,'Cuentas')+kpi(act.length,'Activas','k-verde')+
-     Object.keys(ROLES).filter(r=>r!=='taller'||act.some(u=>u.rol==='taller')).map(r=>kpi(act.filter(u=>u.rol===r).length,ROLES[r])).join('')+'</div>';
+  h+='<div class="kpis">'+kpi(USUARIOS.length,'Cuentas')+kpi(act.length,'Activas','k-verde')+kpi(act.filter(u=>u.cambiar_clave).length,'Con clave temporal')+
+     Object.keys(ROLES).filter(r=>act.some(u=>u.rol===r)).map(r=>kpi(act.filter(u=>u.rol===r).length,ROLES[r])).join('')+'</div>';
   Object.keys(ROLES).forEach(r=>{
     const g=USUARIOS.filter(u=>u.rol===r); if(!g.length) return;
     h+='<div class="sec-t">'+esc(ROLES[r])+' <span>'+g.length+'</span></div><div class="ucards">';
@@ -7352,12 +7467,12 @@ async function admUsuarios(){
         '<div><b>'+esc(u.nombre)+'</b><div class="mini">'+esc(u.usuario)+(u.cargo?' · '+esc(u.cargo):'')+((+u.orden||100)<=8?' · lista de firma n° '+u.orden:'')+'</div></div>'+
         '<span class="bdg3 '+(u.activo===false?'b-gris':'b-verde')+'">'+(u.activo===false?'Deshabilitada':'Activa')+'</span></div>'+
         '<div class="ucard-b">'+(f?'<img src="'+imgFirma(f)+'" alt="firma">':'<span class="mini">Sin firma registrada</span>')+
-        '<div class="mini">'+(u.cambiar_clave?'<b>Contraseña temporal</b> pendiente de cambio · ':'')+'Último ingreso: '+esc(fechaHora(u.ultimo_ingreso))+
+        claveTxt(u)+'<div class="mini">Último ingreso: '+esc(fechaHora(u.ultimo_ingreso))+
         (u.ultimo_dispositivo?' · equipo '+esc(u.ultimo_dispositivo.slice(0,8)):'')+'</div>'+
         '<div class="mini">Primer ingreso: '+esc(fechaHora(u.primer_ingreso))+'</div>'+
         '<div class="mini">Módulos: '+esc(mods.join(', ')||'ninguno')+'</div></div>'+
         '<div class="acc-item"><button class="sec sm" onclick="editarUsuario(\''+u.id+'\')">Editar y permisos</button>'+
-        '<button class="sec sm" onclick="resetClave(\''+u.id+'\')">Restablecer clave</button>'+
+        '<button class="sec sm" onclick="resetClave(\''+u.id+'\')">Generar clave temporal</button>'+
         '<button class="sec sm" onclick="togUsuario(\''+u.id+'\')">'+(u.activo===false?'Habilitar':'Deshabilitar')+'</button>'+
         (puede('auditoria')?'<button class="sec sm" onclick="ACTU=\''+u.id+'\';menuVista(\'adm-act\')">Accesos</button>':'')+'</div></div>';
     });
@@ -7419,7 +7534,7 @@ async function guardarUsuario(){
       const tmp=V('#u_tmp').trim(), err=claveValida(tmp); if(err) return toast('Contraseña temporal: '+err);
       id=await rpc('ast_admin_crear_usuario',{p_usuario:usuario,p_nombre:nom,p_apellido:ape,p_rut:fmtRut(V('#u_rut')),p_cargo:V('#u_car').trim(),p_rol:rol,p_clave:tmp,p_orden:orden});
       if(Object.keys(perm).length) await rpc('ast_admin_editar_usuario',{p_id:id,p_nombre:nom,p_apellido:ape,p_rut:fmtRut(V('#u_rut')),p_cargo:V('#u_car').trim(),p_rol:rol,p_permisos:perm,p_orden:orden});
-      await pregunta('Cuenta creada.\n\nUsuario: '+usuario+'\nContraseña temporal: '+tmp+'\n\nEntrégasela a '+nom+' en persona. Al primer ingreso deberá cambiarla.','Entendido',false);
+      await mostrarClaveUnaVez(usuario,nom,tmp,true);
     } else {
       await rpc('ast_admin_editar_usuario',{p_id:id,p_nombre:nom,p_apellido:ape,p_rut:fmtRut(V('#u_rut')),p_cargo:V('#u_car').trim(),p_rol:rol,p_permisos:perm,p_orden:orden});
       toast('Usuario guardado');
@@ -7459,7 +7574,7 @@ async function admMatriz(){
     '</table></div></div>';
   h+='<div class="card"><h2>Perfiles (valores normales)</h2><div class="tabla-sc"><table class="mat"><tr><th>Perfil</th>'+Object.keys(MODULOS).map(m=>'<th>'+esc(MODULOS[m])+'</th>').join('')+'</tr>'+
     Object.keys(ROLES).map(r=>'<tr><td><b>'+esc(ROLES[r])+'</b></td>'+Object.keys(MODULOS).map(m=>'<td class="c n'+nivelBase(r,m)+'">'+ab[nivelBase(r,m)]+'</td>').join('')+'</tr>').join('')+
-    '</table></div><p class="mini" style="margin-top:8px">Personal de taller sin cuenta = fila «Personal de taller»: solo Nueva AST (crear) y Firmas pendientes (ver).</p></div>';
+    '</table></div><p class="mini" style="margin-top:8px">Personal de taller sin cuenta = fila «Usuario estándar (taller)»: solo Nueva AST (crear) y Firmas pendientes (ver).</p></div>';
   $('#app').innerHTML=h;
   barra([['Actualizar','sec',admMatriz],['Volver','sec',atras]]);
 }
@@ -7894,6 +8009,657 @@ async function cambiarClaveEmergencia(){
 
 /* ---------- Sin claves en el navegador: el PIN por fecha y la clave de respaldo de la versión 2 quedan desactivados ---------- */
 function pinValido(){ return false; }
+
+
+/* =====================================================================
+   AST DIGITAL 3.3
+   Conexión confiable · datos guardados en el equipo · menú ordenado ·
+   Volver por la ruta real · papelera · perfiles · claves temporales
+   ===================================================================== */
+
+/* ---------- Perfiles y módulos ---------- */
+ROLES.planificador='Planificador';
+ROLES.visitante='Visitante';
+ROLES.taller='Usuario estándar (taller)';
+(function(){ const o={}; ['admin','gerencia','supervisor','planificador','calidad','prevencion','admin_taller','taller','visitante']
+  .forEach(k=>{ o[k]=ROLES[k]; delete ROLES[k]; }); Object.assign(ROLES,o); })();
+NIV_BASE.admin.papelera=5;
+NIV_BASE.planificador={ast_dia:1,firmas:1,historico:1,dashboard:1,revision:1};
+NIV_BASE.visitante={ast_dia:1,historico:1,dashboard:1};
+MODULOS.papelera='Papelera de AST';
+VISTA_PERM2.registradas='archivo';
+VISTA_PERM2.papelera='papelera';
+VISTA_PERM2.archivo='archivo';
+CONFIG.ESPERA_LECTURA_MS=30000;
+CONFIG.ESPERA_ESCRITURA_MS=20000;
+
+function puede(p){
+  switch(p){
+    case 'firmar': return nivel('firmas')>=4;
+    case 'dashboard': return nivel('dashboard')>=1;
+    case 'archivo': case 'descargar': return nivel('historico')>=1;
+    case 'revision': return nivel('revision')>=1;
+    case 'versiones': return nivel('historico')>=3;
+    case 'admin': return nivel('configuracion')>=5;
+    case 'usuarios': return nivel('usuarios')>=5;
+    case 'dispositivos': return nivel('dispositivos')>=1;
+    case 'auditoria': return nivel('auditoria')>=1 || nivel('usuarios')>=5;
+    case 'nueva': return nivel('ast_dia')>=2;
+    case 'pendientes': return nivel('firmas')>=1;
+    case 'papelera': return !!USR && nivel('papelera')>=5;
+  }
+  return false;
+}
+
+/* =====================================================================
+   1. CONEXIÓN CON LA NUBE
+   ===================================================================== */
+let NUBE_EST='ok';          // ok · sync · off · err
+let NUBE_MSG='';            // explicación del último problema
+let NUBE_OK_TS=0;           // última respuesta correcta
+let EN_CURSO=0;
+const DIAG=[];              // últimas consultas, para el detalle de conexión
+
+function diag(m,ruta,ms,st,ok){ DIAG.unshift({t:new Date(),m:m,r:String(ruta).split('?')[0],ms:ms,st:st,ok:ok}); if(DIAG.length>15) DIAG.pop(); }
+function ponerEstado(est,msg){
+  const antes=NUBE_EST; NUBE_EST=est; if(msg!==undefined) NUBE_MSG=msg||'';
+  NUBE=(est==='ok'||est==='sync');
+  if(NUBE) NUBE_OK_TS=Date.now();
+  pintaNube();
+  if(antes!==est && (antes==='off'||antes==='err') && NUBE){ toast('Conexión recuperada'); if(COLA.length) enviarCola(false); }
+}
+function inicioCarga(){ EN_CURSO++; if(EN_CURSO===1){ setTimeout(()=>{ if(EN_CURSO>0 && NUBE_EST==='ok') { NUBE_EST='sync'; pintaNube(); } },350); } }
+function finCarga(){ EN_CURSO=Math.max(0,EN_CURSO-1); if(!EN_CURSO && NUBE_EST==='sync'){ NUBE_EST='ok'; pintaNube(); } }
+
+/* Explica el fallo en palabras simples y decide el estado */
+function fallo(e,ms,lectura){
+  if(typeof navigator!=='undefined' && navigator.onLine===false)
+    return {est:'off', msg:'Este equipo no tiene internet. Revisa el Wi-Fi o los datos móviles.'};
+  if(e && e.name==='AbortError')
+    return {est:'err', msg:'La nube tardó más de '+Math.round(ms/1000)+' segundos en responder. Puede ser señal débil o que la base esté ocupada.'};
+  return {est:'err', msg:'No se pudo llegar a Supabase. Puede ser la red de la empresa, un bloqueo del navegador, o que el proyecto esté pausado o restringido.'};
+}
+function falloHttp(st,t){
+  if(st===402 || /exceed|quota|restricted|cuota/i.test(t||''))
+    return 'El proyecto de Supabase está restringido por superar la cuota del plan. Revisa «Usage» o «Billing» en Supabase.';
+  if(st===503 || st===522 || st===544 || st===504) return 'Supabase no respondió a tiempo (error '+st+'). Puede estar reiniciando o con mucha carga.';
+  return 'Supabase respondió con un error de servidor ('+st+').';
+}
+
+/* ---------- Datos guardados en el equipo (para ver sin conexión) ---------- */
+const CACHE={db:null,abierta:null};
+function cacheAbrir(){
+  if(CACHE.abierta) return CACHE.abierta;
+  CACHE.abierta=new Promise(res=>{
+    try{
+      const rq=indexedDB.open('ast_digital_cache',1);
+      rq.onupgradeneeded=()=>{ try{ rq.result.createObjectStore('kv'); }catch(e){} };
+      rq.onsuccess=()=>{ CACHE.db=rq.result; res(CACHE.db); };
+      rq.onerror=()=>res(null);
+    }catch(e){ res(null); }
+  });
+  return CACHE.abierta;
+}
+function claveCache(path){ return 'u:'+(USR?USR.id:'taller')+'|'+String(path).replace(/\d{4}-\d{2}-\d{2}/g,'D'); }
+async function cacheGuardar(path,datos){
+  try{ const db=await cacheAbrir(); if(!db) return;
+    const tx=db.transaction('kv','readwrite'); tx.objectStore('kv').put({ts:Date.now(),d:datos},claveCache(path)); }catch(e){}
+}
+async function cacheLeer(path){
+  try{ const db=await cacheAbrir(); if(!db) return null;
+    return await new Promise(res=>{ const rq=db.transaction('kv','readonly').objectStore('kv').get(claveCache(path));
+      rq.onsuccess=()=>res(rq.result||null); rq.onerror=()=>res(null); }); }catch(e){ return null; }
+}
+let AVISO_CACHE=null;
+function avisoCache(ts){
+  AVISO_CACHE={ts:ts};
+  setTimeout(()=>{
+    const app=$('#app'); if(!app || !AVISO_CACHE) return;
+    let b=$('#aviso_cache');
+    if(!b){ b=document.createElement('div'); b.id='aviso_cache'; b.className='aviso-cache'; app.insertBefore(b,app.firstChild); }
+    b.innerHTML=ic('history')+'<div><b>Sin conexión: estás viendo datos guardados en este equipo</b>'+
+      '<span>Guardados el '+esc(fechaHora(AVISO_CACHE.ts))+'. Pueden no estar al día.</span></div>'+
+      '<button class="sec sm" onclick="reconectar()">Reintentar</button>';
+  },0);
+}
+
+/* ---------- Consultas ---------- */
+async function api(path,opt){
+  if(MODO_LOCAL) return LOCAL.req(path,opt);
+  const m=((opt&&opt.method)||'GET').toUpperCase(), lectura=(m==='GET');
+  const espera=lectura?CONFIG.ESPERA_LECTURA_MS:CONFIG.ESPERA_ESCRITURA_MS;
+  let r, ctl=null, to=null; const t0=Date.now();
+  inicioCarga();
+  try{
+    try{ ctl=new AbortController(); to=setTimeout(()=>ctl.abort(), espera); }catch(e){ ctl=null; }
+    r=await fetch(CONFIG.SB_URL+'/rest/v1/'+path,Object.assign({signal:ctl?ctl.signal:undefined,headers:await cabeceras()},opt||{}));
+    if(to) clearTimeout(to);
+  }catch(e){
+    if(to) clearTimeout(to); finCarga();
+    const f=fallo(e,Date.now()-t0,lectura); diag(m,path,Date.now()-t0,0,false);
+    ponerEstado(f.est,f.msg);
+    if(m==='POST'||m==='PATCH'){
+      encolar(path,opt,path.split('?')[0]);
+      const err=new Error('Sin conexión: la acción quedó guardada en este equipo y se enviará sola cuando vuelva la conexión.'); err.cola=true; throw err;
+    }
+    if(lectura){ const c=await cacheLeer(path); if(c){ avisoCache(c.ts); return c.d; } }
+    throw new Error(f.msg);
+  }
+  finCarga();
+  const ms=Date.now()-t0;
+  if(!r.ok){
+    const t=await r.text(); diag(m,path,ms,r.status,false);
+    if(r.status>=500 || r.status===402){
+      const msg=falloHttp(r.status,t); ponerEstado('err',msg);
+      if(lectura){ const c=await cacheLeer(path); if(c){ avisoCache(c.ts); return c.d; } }
+      const er=new Error(msg); er.status=r.status; throw er;
+    }
+    if(NUBE_EST!=='ok') ponerEstado('ok','');
+    const er=new Error(errorLegible(r.status,t)); er.status=r.status; throw er;
+  }
+  diag(m,path,ms,r.status,true);
+  if(NUBE_EST!=='ok' && NUBE_EST!=='sync') ponerEstado('ok',''); else NUBE_OK_TS=Date.now();
+  const t=await r.text(); const d=t?JSON.parse(t):null;
+  if(lectura && t && t.length<2500000) cacheGuardar(path,d);
+  return d;
+}
+async function apiDirecta(path,opt){
+  if(MODO_LOCAL) return LOCAL.req(path,opt);
+  let r, ctl=null, to=null; const t0=Date.now();
+  inicioCarga();
+  try{
+    try{ ctl=new AbortController(); to=setTimeout(()=>ctl.abort(), CONFIG.ESPERA_ESCRITURA_MS); }catch(e){ ctl=null; }
+    r=await fetch(CONFIG.SB_URL+'/rest/v1/'+path,Object.assign({signal:ctl?ctl.signal:undefined,headers:await cabeceras()},opt||{}));
+    if(to) clearTimeout(to);
+  }catch(e){
+    if(to) clearTimeout(to); finCarga();
+    const f=fallo(e,Date.now()-t0,false); diag('RPC',path,Date.now()-t0,0,false); ponerEstado(f.est,f.msg);
+    throw new Error(f.msg);
+  }
+  finCarga(); diag('RPC',path,Date.now()-t0,r.status,r.ok);
+  if(!r.ok){
+    const t=await r.text();
+    if(r.status>=500 || r.status===402){ const msg=falloHttp(r.status,t); ponerEstado('err',msg); const er=new Error(msg); er.status=r.status; throw er; }
+    if(NUBE_EST!=='ok') ponerEstado('ok','');
+    const er=new Error(errorLegible(r.status,t)); er.status=r.status; throw er;
+  }
+  if(NUBE_EST!=='ok' && NUBE_EST!=='sync') ponerEstado('ok','');
+  const t=await r.text(); return t?JSON.parse(t):null;
+}
+async function rpc(f,args){ return apiDirecta('rpc/'+f,{method:'POST',body:JSON.stringify(args||{})}); }
+
+/* Listas largas: de a 250 filas, cada página con su propio tiempo de espera */
+async function traerTodas(path){
+  const out=[], vistos={}, tam=250;
+  for(let off=0; off<50000; off+=tam){
+    const lote=(await api(path+(path.indexOf('?')>=0?'&':'?')+'limit='+tam+'&offset='+off))||[];
+    lote.forEach(x=>{ if(x && x.id!=null && !vistos[x.id]){ vistos[x.id]=1; out.push(x); } });
+    if(lote.length<tam) break;
+  }
+  return out;
+}
+/* Solo las columnas que usan las listas: nunca las imágenes de firma */
+const SEL_DSH=SEL_LIGERO+',c_tll:contenido->tLlenado,c_etp:contenido->etapas';
+function norm(x){
+  if(x && !x.contenido){
+    x.contenido={descripcion:x.c_desc||'', supTaller:x.c_sup||'', supId:x.c_supid||'', areaN:x.c_areaN||'', lineaN:x.c_lineaN||'',
+      devolucion:x.c_dev||undefined, enRevision:x.c_rev||undefined, versionDe:x.c_vd||undefined, versionBase:x.c_vb||undefined,
+      versionNum:x.c_vn?+x.c_vn:undefined, reemplazadaPor:x.c_reemp||undefined, correlativo:x.c_corr?+x.c_corr:undefined,
+      firmas:x.c_firmas||undefined, notas:x.c_notas||undefined, auditoria:x.c_aud||[],
+      tLlenado:(x.c_tll!=null?+x.c_tll:undefined), etapas:x.c_etp||undefined};
+    x._ligero=true;
+  }
+  return x;
+}
+async function traerLigero(path,sel){
+  try{ return (await traerTodas(path+'&select='+(sel||SEL_LIGERO))).map(norm); }
+  catch(e){
+    if(e.cola) throw e;
+    if(e.status===400 && /column|columna|PGRST/i.test(e.message||'')) return (await traerTodas(path)).map(norm);
+    throw e;
+  }
+}
+const SEL_PART='id,ast_id,nombre,rut,cargo,empresa,animo,afecta,hora,creado';
+
+/* Prueba rápida de conexión (con la sesión y el equipo, como una consulta normal) */
+async function probarNube(silencio){
+  if(!EN_SERVIDOR || MODO_LOCAL){ ponerEstado('ok',''); return true; }
+  if(probando) return NUBE;
+  probando=true; const t0=Date.now(); let ok=false;
+  try{
+    const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),8000);
+    const r=await fetch(CONFIG.SB_URL+'/rest/v1/ast_config?select=id&limit=1',{signal:ctl.signal,headers:await cabeceras()});
+    clearTimeout(to); diag('PING','ast_config',Date.now()-t0,r.status,r.ok);
+    if(r.ok || (r.status>=400 && r.status<500 && r.status!==402)){ ok=true; ponerEstado('ok',''); }
+    else ponerEstado('err',falloHttp(r.status,await r.text()));
+  }catch(e){ const f=fallo(e,Date.now()-t0); diag('PING','ast_config',Date.now()-t0,0,false); ponerEstado(f.est,f.msg); }
+  probando=false;
+  if(ok && COLA.length) enviarCola(false);
+  return ok;
+}
+async function reconectar(){
+  toast('Probando la conexión…');
+  const ok=await probarNube(true);
+  if(ok){ AVISO_CACHE=null; toast('Conectado a la nube'); if(AREA&&LIN){ try{ await cargar(); }catch(e){} } DSH_CACHE.key=''; render(); }
+  else toast(NUBE_MSG||'Sigue sin conexión');
+}
+setInterval(()=>{ if(NUBE_EST==='off'||NUBE_EST==='err') probarNube(true); },15000);
+window.addEventListener('online',()=>probarNube(true));
+window.addEventListener('offline',()=>ponerEstado('off','Este equipo perdió la conexión a internet.'));
+
+const NUBE_TXT={ok:'Conectado',sync:'Sincronizando',off:'Desconectado',err:'Error de conexión'};
+function pintaNube(){
+  const hdr=document.querySelector('header');
+  let ch=$('#nubeChip');
+  if(hdr && !ch){ ch=document.createElement('button'); ch.id='nubeChip'; ch.type='button'; ch.onclick=verConexion; hdr.appendChild(ch); }
+  const est=EN_SERVIDOR?NUBE_EST:'ok';
+  if(ch){ ch.className='nube-chip n-'+est+(COLA.length?' cola':''); ch.title='Estado de la conexión: '+NUBE_TXT[est];
+    ch.innerHTML='<i></i><span>'+NUBE_TXT[est]+(COLA.length?' · '+COLA.length+' por enviar':'')+'</span>'; }
+  const b=$('#salir'); if(b){ b.classList.remove('on'); b.classList.remove('off'); b.title='Cerrar sesión'; }
+  const al=$('#alerta');
+  if(al){
+    if(est==='ok'||est==='sync'){ al.style.display='none'; al.innerHTML=''; }
+    else{
+      al.style.display='flex';
+      al.className='alerta a-'+est;
+      al.innerHTML='<div class="al-t"><b>'+(est==='off'?'Sin internet en este equipo.':'No hay conexión con la nube.')+'</b> '+
+        '<span>'+esc(NUBE_MSG||'')+' Lo que registres queda guardado aquí y se envía solo al volver la conexión; el supervisor no lo verá hasta entonces.</span></div>'+
+        '<div class="al-b"><button onclick="reconectar()">Reintentar</button><button class="sec" onclick="verConexion()">Detalle</button></div>';
+    }
+  }
+}
+function verConexion(){
+  const est=NUBE_TXT[EN_SERVIDOR?NUBE_EST:'ok'];
+  let t='Estado: '+est+'\n';
+  t+='Última respuesta correcta: '+(NUBE_OK_TS?fechaHora(NUBE_OK_TS):'—')+'\n';
+  if(NUBE_MSG && NUBE_EST!=='ok') t+='Problema: '+NUBE_MSG+'\n';
+  t+='Acciones esperando envío: '+COLA.length+'\n';
+  t+='Internet en este equipo: '+(navigator.onLine===false?'no':'sí')+'\n';
+  if(DIAG.length){ t+='\nÚltimas consultas:\n'+DIAG.slice(0,8).map(d=>
+    String(d.t.getHours()).padStart(2,'0')+':'+String(d.t.getMinutes()).padStart(2,'0')+'  '+(d.ok?'✓':'✗')+' '+d.m+' '+d.r+' · '+(d.ms/1000).toFixed(1)+' s'+(d.st?' · '+d.st:' · sin respuesta')).join('\n'); }
+  pregunta(t,'Reintentar ahora').then(ok=>{ if(ok) reconectar(); });
+}
+
+/* =====================================================================
+   2. VOLVER POR EL CAMINO REAL
+   ===================================================================== */
+const NAV={pila:[],actual:null,restaurando:false};
+const NAV_TRANSIT=['clave','login','emergencia','ident'];
+function estadoNav(){ return {k:[vista||'',AREA||'',LIN||'',(ast&&ast.id)||'',archivoAbierto?1:0].join('|'),
+  v:vista||'', a:AREA, l:LIN, id:(ast&&ast.id)||'', arch:!!archivoAbierto}; }
+function navRegistrar(){
+  const st=estadoNav();
+  if(!NAV.actual){ NAV.actual=st; return; }
+  if(st.k===NAV.actual.k) return;
+  const prev=Object.assign({},NAV.actual,{sy:window.scrollY||0});
+  if(NAV.restaurando){ NAV.restaurando=false; NAV.actual=st; return; }
+  const top=NAV.pila[NAV.pila.length-1];
+  if(top && top.k===st.k){ NAV.pila.pop(); NAV.actual=st; restaurarScroll(top.sy); return; }
+  if(st.k==='||||0'){ NAV.pila=[]; NAV.actual=st; return; }                         // el inicio es la raíz
+  const mismaFicha=prev.v===st.v && prev.a===st.a && prev.l===st.l && !prev.id;     // se guardó por primera vez
+  const terminoForm=prev.v==='crear' && st.v==='' && prev.a===st.a && prev.l===st.l; // salió del formulario a su AST
+  if(!mismaFicha && !terminoForm && NAV_TRANSIT.indexOf(prev.v)<0) NAV.pila.push(prev);
+  if(NAV.pila.length>40) NAV.pila.shift();
+  NAV.actual=st;
+}
+function restaurarScroll(y){
+  if(!y) return;
+  [80,400,1000,2000].forEach(ms=>setTimeout(()=>{
+    if(Math.abs((window.scrollY||0)-y)>30 && document.documentElement.scrollHeight>=y+window.innerHeight*0.4) window.scrollTo(0,y);
+  },ms));
+}
+async function atras(){
+  if(vista==='crear'){ salirForm(); return; }
+  if(vista==='adm-usr-ed') EDU=null;
+  if(vista==='adm-fir-ed') EDF=null;
+  const t=NAV.pila.pop();
+  if(!t){
+    if(vista==='ident' && !IDENT){ volverPortada(); return; }
+    if(vista||AREA||archivoAbierto){ AREA=null; LIN=null; ast=null; archivoAbierto=false; vista=''; render(); arriba(); }
+    return;
+  }
+  NAV.restaurando=true;
+  if(t.arch && t.id){ archivoAbierto=false; await abrirArchivo(t.id); }
+  else if(t.a && t.l){
+    await ir(t.a,t.l);
+    if(t.v && t.v!==vista){ NAV.restaurando=true; vista=t.v; render(); }
+  }
+  else if(t.a){ await ir(t.a); }
+  else { AREA=null; LIN=null; ast=null; parts=[]; archivoAbierto=false; vista=t.v; render(); }
+  NAV.restaurando=false;
+  restaurarScroll(t.sy);
+}
+function volverArchivo(){ atras(); }
+function menuVista(v){ vistaNueva=true; abrirMenu(false); AREA=null; LIN=null; ast=null; archivoAbierto=false; vista=v; render(); arriba(); }
+try{ history.pushState({ast33:1},''); }catch(e){}
+window.addEventListener('popstate',function(){
+  const abierto=document.querySelector('.ovl'); if(abierto){ abierto.remove(); }
+  else if($('#lateral') && $('#lateral').classList.contains('open')) abrirMenu(false);
+  else atras();
+  try{ history.pushState({ast33:1},''); }catch(e){}
+});
+
+/* Sin «Volver» repetido: el de arriba es el único */
+function barra(items){
+  ACC=(items||[]).filter(Boolean).filter(it=>it[0]!=='Volver'&&it[0]!=='Inicio');
+  pintaLateral();
+  pintaDock();
+}
+
+/* ---------- Todo pasa por aquí ---------- */
+function render(){
+  if(!LISTO) return;
+  if(USR && USR.claveVencida){ renderClaveVencida(); return; }
+  navRegistrar();
+  render33base();
+  extrasDetalle();
+}
+
+/* =====================================================================
+   3. MENÚ LATERAL: corto, en orden de uso
+   ===================================================================== */
+let LAT_ADM=false;
+function pintaLateral(){
+  const L=$('#lateral'); if(!L) return;
+  const enAdm=/^adm-/.test(vista)||vista==='papelera';
+  let h='<div class="lat-h"><div class="t">AST DIGITAL</div><div class="s">Taller SMAN · '+esc(etiquetaPerfil())+'</div>'+
+        '<div class="cerrar" onclick="abrirMenu(false)">×</div></div>';
+  if(USR) h+='<div class="lat-u">'+ic('shield')+'<div><b>'+esc(USR.nombre)+'</b><span>'+esc(etiquetaPerfil())+' · '+esc(USR.usuario)+'</span></div></div>';
+  h+='<div class="lat-sec">Trabajo diario</div>';
+  h+=navItem('Inicio',ic('home'), !AREA&&!vista&&!archivoAbierto, "menuVista('')");
+  if(puede('nueva')) h+=navItem('Nueva AST',ic('grid'), vista==='areas'||(!!AREA&&!archivoAbierto), "menuVista('areas')");
+  if(puede('pendientes')) h+=navItem('Firmas pendientes',ic('sign'), vista==='firmas', "menuVista('firmas')", PENDS||'');
+  if(puede('archivo')){
+    h+=navItem('AST registradas',ic('list'), vista==='registradas'||vista==='archivo', "menuVista('registradas')");
+    h+=navItem('Archivo histórico',ic('archive'), vista==='historico'||archivoAbierto, "menuVista('historico')");
+    h+=navItem('RAN TALLER',ic('tag'), vista==='ran', "menuVista('ran')");
+  }
+  if(puede('dashboard')||puede('revision')){
+    h+='<div class="lat-sec">Control</div>';
+    if(puede('dashboard')) h+=navItem('Dashboard',ic('chart'), vista==='stats', "menuVista('stats')");
+    if(puede('revision')){
+      h+=navItem('Revisión de AST',ic('search'), vista==='revision', "menuVista('revision')");
+      h+=navItem('Personal registrado',ic('users'), vista==='personal', "menuVista('personal')");
+    }
+  }
+  const verAdm=puede('usuarios')||puede('dispositivos')||puede('auditoria')||puede('papelera')||esAdmin();
+  if(verAdm){
+    const ab=LAT_ADM||enAdm;
+    h+='<button class="lat-sec lat-tog'+(ab?' open':'')+'" onclick="LAT_ADM=!('+(ab?'true':'false')+');pintaLateral()">Administración <span class="ch">'+ic('chev')+'</span></button>';
+    if(ab){
+      if(puede('usuarios')) h+=navItem('Usuarios y accesos',ic('users'), /^adm-(usr|matriz|fir|disp|act)/.test(vista), "menuVista('adm-usr')");
+      else {
+        if(puede('dispositivos')) h+=navItem('Dispositivos',ic('lock'), vista==='adm-disp', "menuVista('adm-disp')");
+        if(puede('auditoria')) h+=navItem('Historial de accesos',ic('history'), vista==='adm-act', "ACTU='';menuVista('adm-act')");
+      }
+      if(puede('papelera')) h+=navItem('Papelera de AST',ic('archive'), vista==='papelera', "menuVista('papelera')");
+      if(esAdmin()) h+=navItem('Configuración',ic('gear'), vista==='adm-config'||/^adm-(areas|area|doc|bloques|cat|preg|gen|log|insc)$/.test(vista), "menuVista('adm-config')");
+    }
+  }
+  h+='<div class="lat-sec">Mi cuenta</div>';
+  if(USR) h+=navItem('Mi cuenta y contraseña',ic('key'), vista==='clave', "abrirMenu(false);vista='clave';render()");
+  else {
+    h+=navItem('Iniciar sesión con mi cuenta',ic('lock'), vista==='login', "abrirMenu(false);LOGIN_DEST=null;vista='login';render()");
+    h+=navItem(IDENT?IDENT.nombre:'Identificarme',ic('user'), vista==='ident', "abrirMenu(false);vista='ident';render()");
+  }
+  const est=EN_SERVIDOR?NUBE_EST:'ok';
+  h+='<div class="lat-pie">'+esc(CONFIG.EMPRESA)+' · '+esc(CONFIG.SUCURSAL)+'<br>'+
+     '<span class="lp-est n-'+est+'" onclick="verConexion()">● '+NUBE_TXT[est]+'</span> · Versión '+CONFIG.VERSION+
+     '</div>';
+  L.innerHTML=h;
+}
+
+/* Configuración reunida en una sola pantalla */
+function admConfig(){
+  if(!esAdmin()){ vista=''; render(); return; }
+  $('#titulo').textContent='Configuración'; $('#meta').textContent='Formularios, catálogos y ajustes de la app';
+  const T=[['adm-areas','grid','Áreas y líneas','Nombres y líneas de cada área'],
+    ['adm-doc','doc','Formularios · Paso 5','Etapas, riesgos y controles por área'],
+    ['adm-bloques','layers','Bloques comunes','Etapas que se repiten en varias áreas'],
+    ['adm-cat','list','Catálogo EPP y equipos','Listas del Paso 4'],
+    ['adm-preg','check','Preguntas pasos 1 a 3','Preguntas de Pensar, Observar y Chequear'],
+    ['adm-gen','gear','Ajustes generales','Empresa, horarios, inactividad'],
+    ['adm-log','history','Registro de cambios','Cambios hechos en la configuración'],
+    ['adm-insc','pen','Inscribirme en varias AST','Firmar como participante en varias a la vez']];
+  $('#app').innerHTML='<div class="cfg-grid">'+T.map(t=>'<button class="cfg-t" onclick="menuVista(\''+t[0]+'\')">'+
+    '<span class="cfg-ic">'+ic(t[1])+'</span><span><b>'+esc(t[2])+'</b><small>'+esc(t[3])+'</small></span></button>').join('')+'</div>';
+  barra([]);
+}
+
+/* =====================================================================
+   4. INICIO Y «AST REGISTRADAS»
+   ===================================================================== */
+async function renderPanel(){
+  $('#titulo').textContent='AST DIGITAL';
+  $('#meta').textContent=fmtFecha(hoy())+' · Taller SMAN';
+  document.body.classList.add('ancha');
+  if(!puede('archivo')){
+    $('#app').innerHTML='<div class="op-grid">'+tarjetaTaller()+tarjetaPendientes(null)+'</div>'+
+      '<div class="qr-mini" onclick="verQR()"><img src="'+QR_DATA+'" alt="QR"><div><b>Código QR de ingreso</b><span class="mini">Tócalo para ampliarlo</span></div></div>';
+    barra([]);
+    try{ const p=(await api('ast_registros?fecha=eq.'+hoy()+'&estado=eq.pendiente&select=id'))||[]; PENDS=p.length;
+      const c=$('#tc_pend'), n=$('#tc_num'); if(c) c.textContent=p.length?'AST esperando firma hoy':'No hay AST esperando firma';
+      if(n){ n.textContent=p.length; n.classList.toggle('hay',p.length>0); } }catch(e){ const n=$('#tc_num'); if(n) n.textContent='–'; }
+    return;
+  }
+  $('#app').innerHTML='<div class="op-grid">'+tarjetaTaller()+(puede('pendientes')?tarjetaPendientes(null):'')+'</div><div id="ini_hoy"><p class="mini">Cargando el día…</p></div>';
+  barra([]);
+  let d=[];
+  try{ d=(await api('ast_registros?fecha=eq.'+hoy()+'&select=id,fecha,estado,area,linea,hora_inicio,hora_fin,sup_nombre,sup_hora,c_supid:contenido->>supId'))||[]; }
+  catch(e){ const el=$('#ini_hoy'); if(el) el.innerHTML='<div class="msg e">No se pudo leer el día.<br><span class="mini">'+esc(e.message)+'</span></div>'; return; }
+  if(vista||AREA) return;
+  const pend=d.filter(x=>x.estado==='pendiente'); PENDS=pend.length;
+  const n=$('#tc_num'), c=$('#tc_pend');
+  if(n){ n.textContent=pend.length; n.classList.toggle('hay',pend.length>0); }
+  if(c) c.textContent=pend.length?'AST esperando firma hoy':'No hay AST esperando firma';
+  const mias=USR?pend.filter(x=>x.c_supid===USR.id).length:0;
+  const cuenta=e=>d.filter(x=>estadoReal(x)===e).length;
+  let h='';
+  if(mias) h+='<div class="msg e" style="cursor:pointer" onclick="soloMias=true;menuVista(\'firmas\')"><b>Tienes '+mias+' AST esperando tu firma.</b> <u>Revisar y firmar</u></div>';
+  h+='<div class="sec-t">'+ic('clock')+' Hoy en el taller <span>'+d.length+' AST</span></div><div class="hoy-grid">'+
+    [['firmada','Autorizadas','k-verde'],['pendiente','Esperando firma','k-rojo'],['borrador','En llenado',''],['archivada','Cerradas','']]
+      .map(z=>'<button class="hoy-k '+z[2]+'" onclick="INI.dias=1;INI.est=\'\';INI.q=\'\';menuVista(\'registradas\')"><b>'+cuenta(z[0])+'</b><small>'+z[1]+'</small></button>').join('')+'</div>';
+  const el=$('#ini_hoy'); if(el) el.innerHTML=h;
+}
+async function renderRegistradas(){
+  $('#titulo').textContent='AST registradas';
+  $('#meta').textContent='Todas las AST del período, con su estado';
+  document.body.classList.add('ancha');
+  $('#app').innerHTML='<p class="mini">Cargando…</p>';
+  try{ INI.data=await traerLigero('ast_registros?fecha=gte.'+fechaMenos(INI.dias)+'&order=creado.desc'); }
+  catch(e){ $('#app').innerHTML='<div class="msg e">No se pudieron leer las AST.<br><span class="mini">'+esc(e.message)+'</span></div>';
+    barra([['Reintentar','sec',renderRegistradas]]); return; }
+  if(vista!=='registradas' && vista!=='archivo') return;
+  let h='<div class="buscador">'+ic('search')+'<input id="ini_q" placeholder="Buscar por número, equipo, actividad o supervisor" value="'+esc(INI.q)+'" oninput="INI.q=this.value;INI.lim=24;pintaListaIni()"></div>';
+  h+='<div class="sec-t">'+ic('list')+' Período <span><select class="sel-osc" onchange="INI.dias=+this.value;INI.lim=24;renderRegistradas()">'+
+    [[1,'Hoy'],[7,'Últimos 7 días'],[30,'Últimos 30 días'],[90,'Últimos 90 días'],[365,'Último año']]
+      .map(o=>'<option value="'+o[0]+'"'+(INI.dias===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></span></div>'+
+    '<div class="chips" id="ini_chips"></div><div class="astgrid" id="ini_lista"></div><div id="ini_mas"></div>';
+  const avisoPrevio=$('#aviso_cache');
+  $('#app').innerHTML=h;
+  if(avisoPrevio) $('#app').insertBefore(avisoPrevio,$('#app').firstChild);
+  pintaListaIni();
+  barra([['Actualizar','sec',renderRegistradas]]);
+}
+
+/* «Otros» solo cuando de verdad se escribió un nombre a mano */
+function asignadoTxt(c){
+  if(!c) return '—';
+  if(c.supId){ const u=FIRMANTES.find(x=>x.id===c.supId); if(u) return u.nombre+' · '+(ROLES[u.rol]||''); return c.supTaller||'—'; }
+  const n=(c.supTaller||'').trim(); if(!n) return '—';
+  return c.supOtros ? n+' (Otros)' : n;
+}
+
+/* El nombre arriba solo identifica; la cuenta se abre desde el menú */
+function pintaQuien(){
+  const q=$('#quien'); if(!q) return;
+  q.onclick=null;
+  if(USR){ q.innerHTML=ic('shield')+' <b>'+esc(USR.nombre)+'</b> · '+esc(etiquetaPerfil()); return; }
+  if(!IDENT){ q.innerHTML=''; return; }
+  q.innerHTML='Estás como <b>'+esc(IDENT.nombre)+'</b>'+(IDENT.cargo?' · '+esc(IDENT.cargo):'')+'<u>Cambiar</u>';
+  q.onclick=()=>{ vista='ident'; render(); };
+}
+
+/* =====================================================================
+   5. PAPELERA: eliminar sin borrar, y recuperar
+   ===================================================================== */
+function extrasDetalle(){
+  if(!(AREA && LIN && !vista && ast && ast.id && puede('papelera'))) return;
+  if(String(ast.id).indexOf('loc')===0) return;
+  const app=$('#app'); if(!app || $('#adm_ast')) return;
+  const d=document.createElement('div'); d.id='adm_ast'; d.className='card adm-ast';
+  d.innerHTML='<h2>'+ic('shield')+' Administración de esta AST</h2>'+
+    '<p class="mini">Eliminar la saca de todas las listas y la deja en la papelera con su número, sus firmas, el motivo y tu nombre. Se puede recuperar.</p>'+
+    '<button class="dan sm" onclick="eliminarAST(\''+ast.id+'\')">Eliminar (enviar a la papelera)</button>';
+  app.appendChild(d);
+}
+async function eliminarAST(id){
+  const num=(ast&&ast.id===id)?(numAST(ast)||'sin número'):'';
+  const m=await preguntaTexto('Eliminar la AST '+num+'\n\nNo se borra: queda en la papelera y se puede recuperar. El número no se vuelve a usar.','Eliminar','Motivo (obligatorio)');
+  if(m===null || m===undefined) return;
+  if(String(m).trim().length<5) return toast('Escribe el motivo (al menos 5 letras)');
+  try{
+    await rpc('ast_eliminar',{p_id:String(id),p_motivo:String(m).trim()});
+    toast('AST enviada a la papelera');
+    INI.data=(INI.data||[]).filter(x=>x.id!==id); HIST.data=(HIST.data||[]).filter(x=>x.id!==id); DSH_CACHE.key='';
+    archivoAbierto=false; AREA=null; LIN=null; ast=null; parts=[];
+    const t=NAV.pila.pop(); NAV.restaurando=true;
+    vista=(t && !t.a && !t.arch)?t.v:''; render();
+  }catch(e){ toast(e.message); }
+}
+let PAP=[];
+async function renderPapelera(){
+  if(!puede('papelera')){ vista=''; render(); return; }
+  $('#titulo').textContent='Papelera de AST'; $('#meta').textContent='AST eliminadas · se pueden recuperar';
+  document.body.classList.add('ancha');
+  $('#app').innerHTML='<p class="mini">Cargando…</p>';
+  try{ PAP=(await rpc('ast_papelera_lista',{}))||[]; }
+  catch(e){ $('#app').innerHTML='<div class="msg e">No se pudo leer la papelera.<br><span class="mini">'+esc(e.message)+'</span></div>';
+    barra([['Reintentar','sec',renderPapelera]]); return; }
+  let h='<div class="msg i">Las AST eliminadas no aparecen en ninguna lista ni en el dashboard. No se borran: conservan su número y sus firmas. Al recuperarlas vuelven tal como estaban.</div>';
+  if(!PAP.length) h+='<div class="card"><p class="mini">La papelera está vacía.</p></div>';
+  else h+='<div class="astgrid">'+PAP.map(x=>{
+    const num=x.numero?('N° '+x.numero+(x.rev>0?' Rev.'+x.rev:'')):'Sin número';
+    return '<div class="astc pap" style="--ec:#8A97A4"><div class="astc-in" style="cursor:default"><div class="astc-top"><span class="astc-num">'+esc(num)+'</span><span class="bdg3 b-gris">En papelera</span></div>'+
+      '<div class="astc-t">'+esc(x.areaN||(AREAS[x.area]||{}).n||x.area||'')+(x.lineaN?' · '+esc(x.lineaN):'')+'</div>'+
+      '<div class="astc-d">'+esc(x.descripcion||'')+'</div>'+
+      '<div class="astc-m"><span>'+esc(fmtFecha(x.fecha))+'</span><span>'+esc(x.responsable||'')+'</span>'+(x.sup_nombre?'<span>firmó '+esc(x.sup_nombre)+'</span>':'')+'</div>'+
+      '<div class="pap-m"><b>Motivo:</b> '+esc(x.motivo||'')+'<br>Eliminada el '+esc(fechaHora(x.eliminada_en))+' por '+esc(x.eliminada_por||'—')+'</div></div>'+
+      '<div class="acc-item"><button class="sec sm" onclick="recuperarAST(\''+esc(x.id)+'\')">Recuperar</button></div></div>'; }).join('')+'</div>';
+  $('#app').innerHTML=h;
+  barra([['Actualizar','sec',renderPapelera]]);
+}
+async function recuperarAST(id){
+  const x=PAP.find(z=>z.id===id);
+  const ok=await pregunta('¿Recuperar la AST'+(x&&x.numero?' N° '+x.numero:'')+'?\n\nVuelve a todas las listas tal como estaba.','Recuperar'); if(!ok) return;
+  try{ await rpc('ast_recuperar',{p_id:id}); toast('AST recuperada'); DSH_CACHE.key=''; renderPapelera(); }catch(e){ toast(e.message); }
+}
+
+/* =====================================================================
+   6. PARTICIPANTES DESPUÉS DE LA FIRMA: con motivo
+   ===================================================================== */
+const MOTIVOS_INC=['Llegó después de la charla','Se sumó para apoyar la tarea','Reemplazo de un trabajador','Cambio de turno','Otro'];
+function renderRegistro(){
+  const est=estadoReal(ast), firmada=estaFirmada(ast), num=numAST(ast); let h='';
+  if(est==='pendiente') h+='<div class="msg e"><b>AST en rojo.</b> Puedes registrarte, pero no inicies la actividad hasta que sea firmada.</div>';
+  if(firmada) h+='<div class="msg i"><b>Te incorporas a una AST ya aprobada'+(num?' ('+esc(num)+')':'')+'.</b> '+
+    'Antes de firmar, lee la AST vigente con quien la creó o con el supervisor. Solo firmas tú: las firmas anteriores no cambian y nadie más tiene que volver a firmar.</div>';
+  h+='<div class="card sec6"><h2>'+(firmada?'Participante adicional':'Registro de participante')+'</h2>'+
+    '<label>Nombre completo</label><input id="p_nom" autocomplete="name" value="'+esc(IDENT.nombre)+'">'+
+    '<div class="row"><div><label>RUT</label><input id="p_rut" inputmode="text" autocapitalize="characters" placeholder="12.345.678-K" autocomplete="off" spellcheck="false" oninput="rutInput(this)" value="'+esc(IDENT.rut)+'"></div>'+
+    '<div><label>Cargo</label><input id="p_car" value="'+esc(IDENT.cargo||'')+'"></div></div>'+
+    '<label>Empresa</label><input id="p_emp" value="'+esc(IDENT.empresa||CONFIG.EMPRESA)+'">'+
+    (firmada?'<label>Motivo de incorporación</label><select id="p_mot" onchange="document.querySelector(\'#p_mot_o\').style.display=this.value===\'Otro\'?\'block\':\'none\'">'+
+      '<option value="">— Elige el motivo —</option>'+MOTIVOS_INC.map(m=>'<option>'+m+'</option>').join('')+'</select>'+
+      '<div id="p_mot_o" style="display:none"><label>Indica el motivo</label><input id="p_mot_txt" maxlength="200" placeholder="En pocas palabras"></div>':'')+
+    '<label>¿Cómo me siento hoy para trabajar?</label>'+
+    '<select id="p_animo" onchange="document.querySelector(\'#p_otro\').style.display=this.value===\'Otro\'?\'block\':\'none\'">'+
+      ANIMOS.map(a=>'<option value="'+a[0]+'">'+a[1]+' '+a[0]+'</option>').join('')+'</select>'+
+    '<div id="p_otro" style="display:none"><label>Indica cómo te sientes</label><input id="p_animo_otro" placeholder="Descríbelo en pocas palabras"></div>'+
+    '<label>¿Tu estado emocional podría afectar la realización segura de tus tareas?</label><select id="p_afecta">'+AFECTA.map(a=>'<option>'+a+'</option>').join('')+'</select>'+
+    '<div class="declara"><div class="d-t">Declaración de los participantes</div><p>'+esc(DECLARACION)+'</p>'+
+    '<label class="chk"><input type="checkbox" id="p_dec"><span>Acepto la declaración</span></label></div>'+
+    '<label>Firma</label><canvas class="pad" id="pad"></canvas>'+
+    '<button class="sec sm" style="margin-top:8px" onclick="limpiarPad()">Borrar firma</button></div>';
+  $('#app').innerHTML=h; iniciarPad($('#pad'));
+  barra([[firmada?'Firmar e incorporarme':'Registrarme','',registrar]]);
+}
+async function registrar(){
+  if(!document.querySelector('#p_nom')) return;
+  const nom=V('#p_nom').replace(/\s+/g,' ').trim();
+  if(!nom) return toast('Falta el nombre');
+  const firmada=estaFirmada(ast);
+  let motivo='';
+  if(firmada){ motivo=V('#p_mot'); if(motivo==='Otro') motivo=V('#p_mot_txt').trim(); if(!motivo) return toast('Indica el motivo de incorporación'); }
+  if(!$('#p_dec').checked) return toast('Debes aceptar la declaración');
+  if(padVacio) return toast('Falta la firma');
+  const rut=fmtRut(V('#p_rut'));
+  if(rut && parts.some(p=>(p.rut||'').replace(/[^0-9kK]/g,'').toUpperCase()===rut.replace(/[^0-9kK]/g,'').toUpperCase())) return toast('Ese RUT ya está registrado en esta AST');
+  const afecta=V('#p_afecta'); let animo=V('#p_animo');
+  if(animo==='Otro'){ const det=V('#p_animo_otro').trim(); if(!det) return toast('Indica cómo te sientes'); animo='Otro: '+det; }
+  const base={id:uuid(), ast_id:ast.id, nombre:nom, rut:rut, cargo:V('#p_car').trim(), empresa:V('#p_emp').trim(),
+    animo:animo, afecta:afecta, firma:$('#pad').toDataURL('image/png'), hora:ahoraHM(), creado:new Date().toISOString()};
+  const p=Object.assign({},base,{declaracion_aceptada:true, post_firma:firmada},motivo?{motivo:motivo}:{});
+  try{
+    try{ await api('ast_participantes',{method:'POST',body:JSON.stringify(p)}); }
+    catch(e){
+      if(!e.cola && /column|columna|PGRST204/i.test(e.message)){
+        const p2=Object.assign({},base,{declaracion_aceptada:true, post_firma:firmada});
+        try{ await api('ast_participantes',{method:'POST',body:JSON.stringify(p2)}); }
+        catch(e2){ if(!e2.cola && /column|columna|PGRST204/i.test(e2.message)) await api('ast_participantes',{method:'POST',body:JSON.stringify(base)}); else throw e2; }
+      } else throw e;
+    }
+    vista=''; await cargar();
+    if(afecta==='Sí'||afecta==='No estoy seguro') avisar('Aviso al supervisor','Un participante declaró que su estado emocional podría afectar la tarea');
+    else toast(firmada?'Quedaste incorporado a la AST '+(numAST(ast)||''):'Quedaste registrado en la AST');
+    render(); arriba();
+  }catch(e){
+    if(e.cola){ parts=parts.concat([p]); vista=''; render(); toast('Sin conexión: tu registro quedó guardado y se enviará solo.'); }
+    else toast(e.message);
+  }
+}
+
+/* =====================================================================
+   7. CLAVES TEMPORALES
+   ===================================================================== */
+const _aplicarPerfil32=aplicarPerfil;
+aplicarPerfil=function(p){
+  _aplicarPerfil32(p);
+  USR.claveVencida=!!p.claveVencida; USR.claveTemporalVence=p.claveTemporalVence||null;
+};
+function renderClaveVencida(){
+  pintaQuien(); pintaNav(); pintaNube();
+  $('#titulo').textContent='Clave temporal vencida'; $('#meta').textContent='AST Digital';
+  $('#app').innerHTML='<div class="login-wrap"><div class="card sec5"><h2>'+ic('key')+' Tu clave temporal venció</h2>'+
+    '<p>Las claves temporales duran '+7+' días. Pide al administrador que te genere una nueva y vuelve a ingresar.</p>'+
+    (USR.claveTemporalVence?'<p class="mini">Venció el '+esc(fechaHora(USR.claveTemporalVence))+'.</p>':'')+'</div></div>';
+  barra([['Cerrar sesión','',()=>cerrarSesionUsr('Sesión cerrada')]]);
+}
+function claveTxt(u){
+  if(!u.cambiar_clave) return '';
+  const v=u.clave_temporal_vence?new Date(u.clave_temporal_vence):null, venc=v && v<new Date();
+  return '<div class="clave-t '+(venc?'venc':'')+'">'+ic('key')+' <b>'+(venc?'Clave temporal vencida':'Clave temporal activa')+'</b>'+
+    (u.clave_temporal_en?' · creada '+esc(fechaHora(u.clave_temporal_en)):'')+(v?' · '+(venc?'venció':'vence')+' '+esc(fechaHora(v)):'')+'</div>';
+}
+function mostrarClaveUnaVez(usuario,nombre,clave,nueva){
+  return new Promise(res=>{
+    const o=document.createElement('div'); o.className='ovl';
+    o.innerHTML='<div class="dlg"><p><b>'+(nueva?'Cuenta creada':'Clave temporal generada')+'</b></p>'+
+      '<p>Usuario: <b>'+esc(usuario)+'</b></p><div class="clave-una"><span class="num" id="cu_txt">'+esc(clave)+'</span><button class="sec sm" id="cu_cp">Copiar</button></div>'+
+      '<p class="mini">Entrégasela a '+esc(nombre)+' en persona. Vence en 7 días y al ingresar deberá cambiarla. '+
+      '<b>No se vuelve a mostrar</b>: la app no la guarda.</p><div class="par"><button id="cu_ok">Listo</button></div></div>';
+    document.body.appendChild(o);
+    o.querySelector('#cu_cp').onclick=async()=>{ try{ await navigator.clipboard.writeText(clave); toast('Copiada'); }catch(e){ toast('No se pudo copiar: anótala'); } };
+    o.querySelector('#cu_ok').onclick=()=>{ o.remove(); res(true); };
+  });
+}
+async function resetClave(id){
+  const u=USUARIOS.find(x=>x.id===id); if(!u) return;
+  const ok=await pregunta('¿Generar una clave temporal nueva para '+u.nombre+'?\n\nLa clave actual deja de servir. La nueva vence en 7 días y deberá cambiarla al ingresar.','Generar'); if(!ok) return;
+  const tmp=claveTemporal();
+  try{ await rpc('ast_admin_clave',{p_id:id,p_clave:tmp}); await mostrarClaveUnaVez(u.usuario,u.nombre,tmp,false); admUsuarios(); }
+  catch(e){ toast(e.message); }
+}
 
 /* ---------- Inicio: no se muestra nada hasta validar dispositivo, sesión y permisos ---------- */
 (async function(){

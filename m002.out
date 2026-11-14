@@ -1,0 +1,35 @@
+
+— Participantes después de la firma —
+OK    La clave antigua ya no está en la configuración pública
+OK    AST de hoy firmada con número 5
+OK    Se agrega un participante a la AST ya firmada
+OK    Queda marcado «después de la firma», con hora y quién lo registró (Pedro Rojas)
+OK    El número y la firma original no cambian
+OK    No se creó otra AST
+OK    No se puede registrar dos veces la misma persona
+OK    Sin firma no se registra
+OK    Sin aceptar la declaración no se registra
+OK    Un participante no se puede modificar
+OK    No se agregan participantes a una AST cerrada
+OK    Auditoría: «Agregó un participante después de la firma»
+
+— «Otros» —
+OK    Se envía a un nombre escrito (sin cuenta)
+OK    Un responsable autorizado la firma y queda su nombre real (Bryan Mendoza)
+OK    El taller sigue sin poder firmar una AST dirigida a «Otros»
+OK    Nadie puede reemplazar la firma de una AST firmada
+
+— Acceso de emergencia —
+OK    La clave de emergencia no se puede leer ni siquiera como administrador
+OK    Clave equivocada: rechazada
+OK    No sirve para tomar una cuenta que no es de administrador
+OK    Clave correcta: recupera la cuenta del administrador
+OK    Entra con su nueva contraseña personal
+OK    La clave de emergencia no sirve para iniciar sesión
+OK    Puede crear una cuenta de administrador nueva
+OK    Después de 3 intentos fallidos el equipo queda bloqueado 15 minutos (incluso con la clave correcta)
+OK    Cada uso queda en el historial (correcto, fallido y bloqueo)
+OK    Un supervisor no puede cambiar la clave de emergencia
+OK    El administrador puede cambiarla
+
+27/27 correctas

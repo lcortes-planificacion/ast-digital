@@ -1,0 +1,61 @@
+
+— Perfiles nuevos —
+OK    Se crea una cuenta de Planificador
+OK    Se crea una cuenta de Visitante
+OK    Rechaza una clave temporal sin números
+OK    Planificador: ve histórico y dashboard, no firma ({'firmas': 1, 'ast_dia': 1, 'papelera': 0, 'revision': 1, 'usuarios': 0, 'auditoria': 0, 'dashboard': 1, 'historico': 1, 'dispositivos': 0, 'configuracion': 0})
+OK    Planificador lee las AST
+OK    Planificador no puede firmar
+OK    Planificador no crea AST
+OK    Visitante: solo lectura
+OK    Visitante no crea AST
+OK    Planificador y Visitante no aparecen en «Se envía a firma de»
+
+— Claves temporales —
+OK    La cuenta nueva guarda fecha de creación y vencimiento a 7 días
+OK    El administrador ve quién tiene clave temporal y cuándo vence
+OK    La tabla de cuentas no guarda ninguna contraseña
+OK    Clave temporal vencida: la app lo sabe
+OK    …y la cuenta queda sin acceso a nada
+OK    …ni siquiera puede leer AST
+OK    …ni dar por cambiada su clave
+OK    El administrador genera otra clave temporal
+OK    La clave nueva vuelve a durar 7 días
+OK    Rechaza una clave débil
+OK    Con la clave nueva puede cambiarla
+OK    Al cambiarla, desaparece la marca de clave temporal
+OK    Un supervisor no puede generar claves
+
+— Papelera —
+OK    AST de hoy firmada con número 5
+OK    Un supervisor no puede eliminar AST
+OK    Sin motivo no se puede eliminar
+OK    El administrador la envía a la papelera
+OK    No se puede eliminar dos veces
+OK    Ya no aparece en las listas para el taller
+OK    Ya no aparece en las listas para el supervisor
+OK    Ya no aparece en las listas para el administrador
+OK    Sus participantes tampoco aparecen
+OK    Nadie la puede modificar en la papelera
+OK    No se agregan participantes a una AST en la papelera
+OK    No se borró nada: la AST, su firma y su número siguen en la base
+OK    Un supervisor no ve la papelera
+OK    El administrador la ve en la papelera con número, motivo y quién la eliminó
+OK    La tabla de la papelera no se puede leer ni tocar directo
+OK    Un supervisor no puede recuperar
+OK    El administrador la recupera
+OK    Vuelve a las listas con el mismo número y la misma firma
+OK    …y con sus participantes
+OK    El historial registra la eliminación (con motivo) y la recuperación
+OK    Queda el historial interno de la papelera
+
+— Motivo de incorporación —
+OK    Participante después de la firma guarda su motivo
+OK    Si una versión antigua no manda motivo, queda «Sin motivo indicado»
+OK    El historial muestra el motivo
+OK    Las firmas y el número no cambiaron
+
+— Se puede volver a correr —
+OK    La migración 003 corre otra vez sin error ni cambios
+
+49/49 correctas

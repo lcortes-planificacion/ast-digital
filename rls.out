@@ -1,0 +1,67 @@
+
+— Taller sin cuenta —
+OK    Sin dispositivo registrado no ve ninguna AST
+OK    Registra su dispositivo
+OK    Ve solo las AST del día (['hoy1'])
+OK    Consulta directa al historial devuelve vacío
+OK    Pedir una AST histórica por su id devuelve vacío
+OK    Participantes: solo los de AST del día
+OK    No ve los números del historial
+OK    Crea una AST del día
+OK    No puede crear AST con fecha antigua
+OK    No puede crear una AST ya firmada
+OK    No puede firmar (aunque mande la firma directo)
+OK    No puede modificar una AST enviada a firma
+OK    No puede eliminar AST
+OK    No puede tocar una AST histórica
+OK    No ve las cuentas de usuarios
+OK    No ve la auditoría
+OK    No ve las firmas registradas
+OK    De la configuración solo ve la general
+OK    No puede cambiar la configuración
+OK    No puede crear un administrador
+OK    La función interna de creación no se puede llamar
+OK    No puede inventar un número oficial
+OK    Lista de firmantes: 8 nombres en orden
+
+— Cuentas —
+OK    Ingreso con usuario y contraseña
+OK    Contraseña equivocada no entra
+OK    Perfil y permisos vienen de la base (supervisor)
+OK    Un supervisor no puede cambiarse el rol
+OK    Un supervisor no puede usar las funciones de administración
+OK    Supervisor ve el historial (7)
+OK    Otro supervisor no puede firmar una AST asignada a Bryan
+OK    Otro supervisor no puede devolver una AST asignada a Bryan
+OK    Bryan firma su AST
+OK    El nombre del firmante lo pone la base, no el navegador (Bryan Mendoza)
+OK    La base asigna el número oficial (5)
+OK    Firma con fecha, hora y cuenta registradas por la base
+OK    Ni el administrador puede modificar una AST firmada
+OK    Ni el administrador puede quitar una firma
+OK    Ni el administrador puede eliminar una AST
+OK    Se puede agregar una nota de corrección
+OK    Una nota ya escrita no se puede cambiar
+OK    Nueva versión firmada: mismo número, Rev.1
+
+— Número oficial con firmas simultáneas —
+OK    20 firmas al mismo tiempo: 20 números distintos y seguidos
+
+— Desactivar cuentas y bloquear dispositivos —
+OK    Administrador deshabilita a Richard
+OK    Con la sesión que ya tenía abierta no ve nada
+OK    Ya no puede iniciar sesión
+OK    Deja de aparecer en «Se envía a firma de»
+OK    Sus firmas anteriores siguen en el historial
+OK    Administrador bloquea el teléfono de Juan
+OK    El teléfono bloqueado ya no ve AST
+OK    Ni puede crear AST
+OK    El administrador no se puede deshabilitar a sí mismo
+
+— Perfiles nuevos —
+OK    Administrador crea cuentas de Calidad y de Personal de taller
+OK    Personal de taller con cuenta tampoco ve el historial
+OK    Calidad no puede agregar notas (solo lectura del historial)
+OK    La auditoría registra firmas, accesos y bloqueos
+
+55/55 correctas
