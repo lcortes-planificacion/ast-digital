@@ -1199,6 +1199,18 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 
 /* Fondo de las pantallas internas: el mismo tema, más tenue detrás del contenido */
 body::before{background-size:auto,auto,420px 420px,auto!important}
+
+/* Pantallas internas: fondo industrial sutil, un poco más presente que antes */
+body::after{background:rgba(7,26,46,.87)!important}
+/* Tarjetas y paneles interiores: la misma trama, casi imperceptible, sobre blanco */
+.card,.d4-fil,.ucard,.cfg-t,.pl{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.976),rgba(248,251,254,.982)),var(--fondo-ast-osc)!important;
+  background-size:auto,520px 520px!important;background-repeat:no-repeat,repeat!important;background-position:0 0,right -60px bottom -60px!important;background-color:#fff!important}
+.card h2,.pl-h{position:relative}
+@media print{ .card,.d4-c,.astc,.pl{background-image:none!important} }
+/* El fondo de la página no debe tapar la trama industrial */
+html{background:#071A2E!important}
+body{background:transparent!important}
 </style>
 
 </head>
@@ -1249,7 +1261,7 @@ const CONFIG = {
   SB_KEY : 'sb_publishable_WOTPiecKx5ai4F6feLbexQ_doYTScvd',
   EMPRESA : 'SM Cyclo de Chile Ltda.',
   SUCURSAL: 'SMAN',
-  VERSION : '3.5',
+  VERSION : '3.5.1',
   DIAS_RETENCION : 90,
   REFRESCO_SEG : 30,
   ESPERA_MAX_MS : 4000
@@ -9530,6 +9542,15 @@ async function renderPanel(){
   $('#meta').textContent=fmtFecha(hoy())+' · Taller SMAN';
   document.body.classList.add('ancha');
   const conHist=puede('archivo');
+  if(!USR){   /* sesión de taller sin cuenta: solo sus accesos, sin indicadores */
+    $('#app').innerHTML='<div class="op-grid">'+tarjetaTaller()+tarjetaPendientes(null)+'</div>'+
+      '<div class="qr-mini" onclick="verQR()"><img src="'+QR_DATA+'" alt="QR"><div><b>Código QR de ingreso</b><span class="mini">Tócalo para ampliarlo</span></div></div>';
+    barra([]);
+    try{ const p=(await api('ast_registros?fecha=eq.'+hoy()+'&estado=eq.pendiente&select=id'))||[]; PENDS=p.length;
+      const c=$('#tc_pend'), n=$('#tc_num'); if(c) c.textContent=p.length?'AST esperando firma hoy':'No hay AST esperando firma';
+      if(n){ n.textContent=p.length; n.classList.toggle('hay',p.length>0); } }catch(e){ const n=$('#tc_num'); if(n) n.textContent='–'; }
+    return;
+  }
   $('#app').innerHTML='<div class="op-grid">'+tarjetaTaller()+(puede('pendientes')?tarjetaPendientes(null):'')+'</div>'+
     '<div class="wi-grid" id="ini_w"><section class="wi"><p class="mini">Cargando el día…</p></section></div>'+
     (conHist?'':'<div class="qr-mini" onclick="verQR()"><img src="'+QR_DATA+'" alt="QR"><div><b>Código QR de ingreso</b><span class="mini">Tócalo para ampliarlo</span></div></div>');
@@ -9589,6 +9610,7 @@ async function renderPanel(){
     /* reductor (taller) */ '<g transform="translate(300 330)"><rect x="0" y="10" width="64" height="40" rx="6"/><circle cx="20" cy="30" r="10"/><circle cx="46" cy="30" r="6"/><path d="M64 30h26M-20 30h20"/></g>'+
     '</svg>';
   document.documentElement.style.setProperty('--fondo-ast','url("data:image/svg+xml,'+encodeURIComponent(s)+'")');
+  document.documentElement.style.setProperty('--fondo-ast-osc','url("data:image/svg+xml,'+encodeURIComponent(s.replace('stroke="#9EC3E8"','stroke="#0B3A73"'))+'")');
   /* Portada: los temas pasan a ser información, no botones */
   const ch=document.querySelector('#portada .cover-chips');
   if(ch){
